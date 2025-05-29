@@ -1,0 +1,695 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// generator erd {
+//   provider = "prisma-erd-generator"
+//   output = "../ERD.pdf"
+// }
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MANAGEMENT & AUTHENTICATION
+// ============================================
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  password          String?   // Null for social login users
+  firstName         String?
+  lastName          String?
+  profileImage      String?   // Profile photo URL
+  isEmailVerified   Boolean   @default(false)
+  emailVerificationToken String?
+  emailVerificationExpires DateTime?
+  resetPasswordToken String?
+  resetPasswordExpires DateTime?
+  role              UserRole  @default(USER)
+  provider          AuthProvider @default(EMAIL) // EMAIL, GOOGLE, FACEBOOK, TWITTER
+  providerId        String?   // Social login ID
+
+  // Personal Information (required for job seekers)
+  dateOfBirth       DateTime?
+  gender            Gender?
+  lastEducation     Education?
+  currentAddress    String?
+  phoneNumber       String?
+
+  // Location for job recommendations
+  latitude          Float?
+  longitude         Float?
+  city              String?
+  country           String?
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastLoginAt       DateTime?
+
+  // Relations
+  company           Company?
+  jobApplications   JobApplication[]
+  savedJobs         SavedJob[]
+  subscriptions     Subscription[]
+  skillAssessments  UserSkillAssessment[]
+  certificates      Certificate[]
+  companyReviews    CompanyReview[]
+  interviewSchedules InterviewSchedule[]
+
+  @@map("users")
+  Notification Notification[]
+}
+
+model Company {
+  id                String    @id @default(cuid())
+  name              String
+  description       String?
+  website           String?
+  logo              String?   // Company logo URL
+  industry          String?
+  size              CompanySize?
+  foundedYear       Int?
+
+  // Contact Information
+  email             String?
+  phone             String?
+
+  // Address
+  address           String?
+  city              String?
+  country           String?
+  latitude          Float?
+  longitude         Float?
+
+  // Social Media
+  linkedinUrl       String?
+  facebookUrl       String?
+  twitterUrl        String?
+  instagramUrl      String?
+
+  // Admin user (one-to-one relationship)
+  adminId           String    @unique
+  admin             User      @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  jobPostings       JobPosting[]
+  companyReviews    CompanyReview[]
+  preSelectionTests PreSelectionTest[]
+
+  @@map("companies")
+}
+
+// ============================================
+// JOB MANAGEMENT
+// ============================================
+
+model JobPosting {
+  id                String    @id @default(cuid())
+  title             String
+  description       String
+  banner            String?   // Job banner image URL
+
+  // Job Details
+  category          JobCategory
+  employmentType    EmploymentType @default(FULL_TIME)
+  experienceLevel   ExperienceLevel @default(ENTRY_LEVEL)
+  salaryMin         Int?
+  salaryMax         Int?
+  salaryCurrency    String    @default("IDR")
+
+  // Location
+  city              String
+  country           String    @default("Indonesia")
+  isRemote          Boolean   @default(false)
+  latitude          Float?
+  longitude         Float?
+
+  // Application Settings
+  applicationDeadline DateTime?
+  isActive          Boolean   @default(true)
+  isPriority        Boolean   @default(false) // For premium job postings
+
+  // Requirements & Benefits
+  requirements      String[]  // Array of requirements
+  benefits          String[]  // Array of benefits
+  tags              String[]  // Job tags for better searchability
+
+  // Company relation
+  companyId         String
+  company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Pre-selection test (optional)
+  preSelectionTestId String?
+  preSelectionTest  PreSelectionTest? @relation(fields: [preSelectionTestId], references: [id])
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  publishedAt       DateTime?
+
+  // Relations
+  applications      JobApplication[]
+  savedByUsers      SavedJob[]
+  interviewSchedules InterviewSchedule[]
+
+  @@map("job_postings")
+}
+
+model JobApplication {
+  id                String    @id @default(cuid())
+
+  // Application Details
+  cvUrl             String    // URL to uploaded CV
+  expectedSalary    Int?
+  coverLetter       String?
+
+  // Application Status
+  status            ApplicationStatus @default(PENDING)
+  rejectionReason   String?   // Reason for rejection
+  adminNotes        String?   // Internal notes from company admin
+
+  // Test Results (if pre-selection test exists)
+  testScore         Int?      // Score out of 100
+  testCompletedAt   DateTime?
+
+  // User and Job relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobPostingId      String
+  jobPosting        JobPosting @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  reviewedAt        DateTime? // When admin reviewed the application
+
+  // Relations
+  interviewSchedules InterviewSchedule[]
+
+  @@unique([userId, jobPostingId]) // One application per user per job
+  @@map("job_applications")
+}
+
+model SavedJob {
+  id                String    @id @default(cuid())
+
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobPostingId      String
+  jobPosting        JobPosting @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime  @default(now())
+
+  @@unique([userId, jobPostingId])
+  @@map("saved_jobs")
+}
+
+// ============================================
+// INTERVIEW MANAGEMENT
+// ============================================
+
+model InterviewSchedule {
+  id                String    @id @default(cuid())
+
+  // Interview Details
+  scheduledAt       DateTime
+  duration          Int       @default(60) // Duration in minutes
+  location          String?   // Physical location or meeting URL
+  interviewType     InterviewType @default(ONLINE)
+  notes             String?
+
+  // Status
+  status            InterviewStatus @default(SCHEDULED)
+  reminderSent      Boolean   @default(false)
+
+  // Relations
+  jobApplicationId  String
+  jobApplication    JobApplication @relation(fields: [jobApplicationId], references: [id], onDelete: Cascade)
+  jobPostingId      String
+  jobPosting        JobPosting @relation(fields: [jobPostingId], references: [id])
+  candidateId       String
+  candidate         User      @relation(fields: [candidateId], references: [id])
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("interview_schedules")
+}
+
+// ============================================
+// PRE-SELECTION TESTS
+// ============================================
+
+model PreSelectionTest {
+  id                String    @id @default(cuid())
+  title             String
+  description       String?
+  passingScore      Int       @default(75) // Minimum score to pass
+  timeLimit         Int       @default(30) // Time limit in minutes
+  isActive          Boolean   @default(true)
+
+  // Company relation
+  companyId         String
+  company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  questions         PreSelectionQuestion[]
+  jobPostings       JobPosting[]
+
+  @@map("pre_selection_tests")
+}
+
+model PreSelectionQuestion {
+  id                String    @id @default(cuid())
+  question          String
+  optionA           String
+  optionB           String
+  optionC           String
+  optionD           String
+  correctAnswer     String    // A, B, C, or D
+  explanation       String?   // Optional explanation for the correct answer
+
+  testId            String
+  test              PreSelectionTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("pre_selection_questions")
+}
+
+// ============================================
+// SUBSCRIPTION SYSTEM
+// ============================================
+
+model SubscriptionPlan {
+  id                String    @id @default(cuid())
+  name              String    @unique // STANDARD, PROFESSIONAL
+  price             Int       // Price in IDR
+  duration          Int       @default(30) // Duration in days
+  description       String?
+
+  // Features
+  features          Json      // JSON object containing feature flags
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  subscriptions     Subscription[]
+
+  @@map("subscription_plans")
+}
+
+model Subscription {
+  id                String    @id @default(cuid())
+
+  // Subscription Details
+  startDate         DateTime  @default(now())
+  endDate           DateTime
+  status            SubscriptionStatus @default(ACTIVE)
+  autoRenew         Boolean   @default(false)
+
+  // Payment Information
+  paymentMethod     PaymentMethod
+  paymentProof      String?   // URL to payment proof image
+  paymentStatus     PaymentStatus @default(PENDING)
+  transactionId     String?
+
+  // Relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId            String
+  plan              SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("subscriptions")
+}
+
+// ============================================
+// SKILL ASSESSMENT SYSTEM
+// ============================================
+
+model SkillCategory {
+  id                String    @id @default(cuid())
+  name              String    @unique
+  description       String?
+  icon              String?   // Icon URL or class name
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  skillAssessments  SkillAssessment[]
+
+  @@map("skill_categories")
+}
+
+model SkillAssessment {
+  id                String    @id @default(cuid())
+  title             String
+  description       String?
+  passingScore      Int       @default(75)
+  timeLimit         Int       @default(30) // Time limit in minutes
+  isActive          Boolean   @default(true)
+
+  // Category relation
+  categoryId        String
+  category          SkillCategory @relation(fields: [categoryId], references: [id])
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  questions         SkillAssessmentQuestion[]
+  userAssessments   UserSkillAssessment[]
+
+  @@map("skill_assessments")
+}
+
+model SkillAssessmentQuestion {
+  id                String    @id @default(cuid())
+  question          String
+  optionA           String
+  optionB           String
+  optionC           String
+  optionD           String
+  correctAnswer     String    // A, B, C, or D
+  explanation       String?
+
+  assessmentId      String
+  assessment        SkillAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("skill_assessment_questions")
+}
+
+model UserSkillAssessment {
+  id                String    @id @default(cuid())
+
+  // Assessment Results
+  score             Int       // Score out of 100
+  isPassed          Boolean   @default(false)
+  completedAt       DateTime  @default(now())
+  timeSpent         Int       // Time spent in minutes
+
+  // Badge Information
+  badgeEarned       Boolean   @default(false)
+  badgeIssuedAt     DateTime?
+
+  // Relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assessmentId      String
+  assessment        SkillAssessment @relation(fields: [assessmentId], references: [id])
+
+  // Certificate relation
+  certificates      Certificate[]
+
+  @@unique([userId, assessmentId])
+  @@map("user_skill_assessments")
+}
+
+model Certificate {
+  id                String    @id @default(cuid())
+  certificateCode   String    @unique // Unique verification code
+  title             String
+  description       String?
+  issueDate         DateTime  @default(now())
+  expiryDate        DateTime? // Optional expiry date
+
+  // Certificate file
+  certificateUrl    String    // URL to generated PDF certificate
+  qrCodeUrl         String?   // URL to QR code image
+
+  // Verification
+  isValid           Boolean   @default(true)
+  verificationCount Int       @default(0) // Track how many times verified
+
+  // Relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAssessmentId  String
+  userAssessment    UserSkillAssessment @relation(fields: [userAssessmentId], references: [id])
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("certificates")
+}
+
+// ============================================
+// COMPANY REVIEW SYSTEM
+// ============================================
+
+model CompanyReview {
+  id                String    @id @default(cuid())
+
+  // Review Content
+  title             String?
+  review            String
+  rating            Float     // Overall rating (1-5)
+
+  // Specific Ratings
+  cultureRating     Float?    // Work culture rating
+  workLifeBalance   Float?    // Work-life balance rating
+  facilitiesRating  Float?    // Facilities rating
+  careerRating      Float?    // Career opportunities rating
+
+  // Employment Information
+  jobPosition       String
+  employmentStatus  EmploymentStatus
+  workDuration      String?   // e.g., "2 years", "6 months"
+  salaryEstimate    Int?      // Monthly salary estimate
+
+  // Review Settings
+  isAnonymous       Boolean   @default(true)
+  isVerified        Boolean   @default(false)
+
+  // Relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId         String
+  company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Timestamps
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("company_reviews")
+}
+
+// ============================================
+// ANALYTICS & REPORTING
+// ============================================
+
+model WebsiteAnalytics {
+  id                String    @id @default(cuid())
+  date              DateTime  @db.Date
+
+  // User Analytics
+  totalUsers        Int       @default(0)
+  newUsers          Int       @default(0)
+  activeUsers       Int       @default(0)
+
+  // Job Analytics
+  totalJobPostings  Int       @default(0)
+  newJobPostings    Int       @default(0)
+  totalApplications Int       @default(0)
+  newApplications   Int       @default(0)
+
+  // Subscription Analytics
+  totalSubscriptions Int      @default(0)
+  newSubscriptions  Int       @default(0)
+  subscriptionRevenue Float   @default(0)
+
+  // Assessment Analytics
+  assessmentsTaken  Int       @default(0)
+  certificatesIssued Int      @default(0)
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([date])
+  @@map("website_analytics")
+}
+
+ model Notification {
+   id          String    @id @default(cuid())
+   userId      String
+   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+   type        NotificationType
+   message     String
+   link        String?   // Link to relevant page (e.g., job application, interview)
+   isRead      Boolean   @default(false)
+   createdAt   DateTime  @default(now())
+   updatedAt   DateTime  @updatedAt
+
+   @@map("notifications")
+ }
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  USER          // Job seeker
+  COMPANY_ADMIN // Company administrator
+  ADMIN         // Site administrator
+  Developer     // Platform configuration admin
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  FACEBOOK
+  TWITTER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum Education {
+  HIGH_SCHOOL
+  DIPLOMA
+  BACHELOR
+  MASTER
+  DOCTORATE
+  OTHER
+}
+
+enum CompanySize {
+  STARTUP       // 1-10 employees
+  SMALL         // 11-50 employees
+  MEDIUM        // 51-200 employees
+  LARGE         // 201-1000 employees
+  ENTERPRISE    // 1000+ employees
+}
+
+enum JobCategory {
+  TECHNOLOGY
+  MARKETING
+  SALES
+  FINANCE
+  HUMAN_RESOURCES
+  OPERATIONS
+  DESIGN
+  CUSTOMER_SERVICE
+  HEALTHCARE
+  EDUCATION
+  CONSTRUCTION
+  MANUFACTURING
+  RETAIL
+  HOSPITALITY
+  TRANSPORTATION
+  LEGAL
+  CONSULTING
+  MEDIA
+  NON_PROFIT
+  GOVERNMENT
+  OTHER
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+  REMOTE
+}
+
+enum ExperienceLevel {
+  ENTRY_LEVEL
+  MID_LEVEL
+  SENIOR_LEVEL
+  EXECUTIVE
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  INTERVIEW_SCHEDULED
+  INTERVIEW_COMPLETED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum InterviewType {
+  ONLINE
+  PHONE
+  IN_PERSON
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CREDIT_CARD
+  E_WALLET
+  PAYMENT_GATEWAY
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum EmploymentStatus {
+  CURRENT_EMPLOYEE
+  FORMER_EMPLOYEE
+  CONTRACTOR
+  INTERN
+}
+
+ enum NotificationType {
+   NEW_APPLICATION_RECEIVED // For Company Admin
+   APPLICATION_STATUS_UPDATE // For User
+   INTERVIEW_SCHEDULED       // For User & Company Admin
+   INTERVIEW_REMINDER        // For User & Company Admin
+   SUBSCRIPTION_EXPIRING
+   SUBSCRIPTION_ENDED
+   NEW_JOB_MATCHING_PROFILE  // For User (if recommendations implemented)
+   ASSESSMENT_COMPLETED
+   CERTIFICATE_ISSUED
+   // ... other types
+ }
