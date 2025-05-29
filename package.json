@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "prisma db seed"
-     },
+  },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
@@ -18,6 +18,7 @@
     "@googlemaps/google-maps-services-js": "^3.4.1",
     "@hookform/resolvers": "^5.0.1",
     "@prisma/client": "^6.8.2",
+    "@radix-ui/react-slot": "^1.2.3",
     "@react-email/components": "^0.0.41",
     "@supabase/supabase-js": "^2.49.8",
     "bcryptjs": "^3.0.2",

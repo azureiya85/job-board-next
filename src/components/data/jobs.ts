@@ -56,9 +56,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -6.225, // Jakarta Selatan
     longitude: 106.82,
-    provinceId: 'province_dki_id',
-    cityId: 'city_jkt_selatan_id',
-    applicationDeadline: new Date('2024-08-30T23:59:59Z'),
+    provinceId: 'DKI',
+    cityId: 'Jakarta Utara',
+    applicationDeadline: new Date('2025-08-30T23:59:59Z'),
     isActive: true,
     isPriority: true,
     requirements: ['5+ years Golang experience', 'Microservices architecture', 'Docker, Kubernetes', 'SQL/NoSQL databases'],
@@ -81,9 +81,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -6.225, // Jakarta Selatan
     longitude: 106.82,
-    provinceId: 'province_dki_id',
-    cityId: 'city_jkt_selatan_id',
-    applicationDeadline: new Date('2024-09-15T23:59:59Z'),
+    provinceId: 'DKI',
+    cityId: 'Jakarta Selatan',
+    applicationDeadline: new Date('2025-09-15T23:59:59Z'),
     isActive: true,
     requirements: ['3+ years React.js experience', 'HTML, CSS, JavaScript (ES6+)', 'State management (Redux/Context API)', 'RESTful APIs'],
     benefits: ['Health insurance', 'Free lunch', 'Training budget', 'Team outings'],
@@ -104,9 +104,9 @@ export const jobPostings: JobPostingMockData[] = [
     salaryMax: 18000000,
     isRemote: true, // Remote job
     // No specific lat/long for remote, but company location can be fallback
-    provinceId: 'province_dki_id', // Company's province
-    cityId: 'city_jkt_selatan_id',  // Company's city
-    applicationDeadline: new Date('2024-08-20T23:59:59Z'),
+    provinceId: 'DKI', // Company's province
+    cityId: 'Bekasi',  // Company's city
+    applicationDeadline: new Date('2025-08-20T23:59:59Z'),
     isActive: true,
     requirements: ['Experience with Selenium/Cypress', 'API testing', 'CI/CD pipelines', 'Agile methodology'],
     benefits: ['Remote work flexibility', 'Competitive salary', 'Learning opportunities'],
@@ -129,9 +129,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -6.89, // Bandung
     longitude: 107.6,
-    provinceId: 'province_jabar_id',
-    cityId: 'city_bandung_id',
-    applicationDeadline: new Date('2024-09-01T23:59:59Z'),
+    provinceId: 'JABAR',
+    cityId: 'Bandung',
+    applicationDeadline: new Date('2025-09-01T23:59:59Z'),
     isActive: true,
     isPriority: false,
     requirements: ['Proven digital marketing experience', 'Google Ads, Facebook Ads', 'SEO tools', 'Content creation skills'],
@@ -153,9 +153,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -6.89, // Bandung
     longitude: 107.6,
-    provinceId: 'province_jabar_id',
-    cityId: 'city_bandung_id',
-    applicationDeadline: new Date('2024-08-15T23:59:59Z'),
+    provinceId: 'DIY',
+    cityId: 'Yogyakarta',
+    applicationDeadline: new Date('2025-08-15T23:59:59Z'),
     isActive: true,
     requirements: ['Proficiency in Adobe Creative Suite (Photoshop, Illustrator)', 'Strong portfolio (even student work)', 'Eagerness to learn'],
     benefits: ['Mentorship program', 'Potential for full-time offer', 'Creative projects'],
@@ -177,9 +177,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -6.89, // Bandung
     longitude: 107.6,
-    provinceId: 'province_jabar_id',
-    cityId: 'city_bandung_id',
-    applicationDeadline: new Date('2024-09-10T23:59:59Z'),
+    provinceId: 'JATENG',
+    cityId: 'Semarang',
+    applicationDeadline: new Date('2025-09-10T23:59:59Z'),
     isActive: true,
     requirements: ['2+ years social media management', 'Content creation', 'Community management', 'Analytics tools'],
     benefits: ['Dynamic team', 'Opportunity for growth', 'Health insurance'],
@@ -202,9 +202,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -7.28, // Surabaya
     longitude: 112.74,
-    provinceId: 'province_jatim_id',
-    cityId: 'city_surabaya_id',
-    applicationDeadline: new Date('2024-08-25T23:59:59Z'),
+    provinceId: 'JATIM',
+    cityId: 'Surabaya',
+    applicationDeadline: new Date('2025-08-25T23:59:59Z'),
     isActive: true,
     requirements: ['Degree in Agronomy or related field', '5+ years experience in organic farming', 'Knowledge of sustainable practices'],
     benefits: ['Work in a green environment', 'Contribute to sustainability', 'Accommodation (optional)'],
@@ -226,9 +226,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false,
     latitude: -7.28, // Surabaya
     longitude: 112.74,
-    provinceId: 'province_jatim_id',
-    cityId: 'city_surabaya_id',
-    applicationDeadline: new Date('2024-09-05T23:59:59Z'),
+    provinceId: 'JATIM',
+    cityId: 'Malang',
+    applicationDeadline: new Date('2025-09-05T23:59:59Z'),
     isActive: true,
     requirements: ['Experience in operations or supply chain', 'Problem-solving skills', 'Team leadership'],
     benefits: ['Challenging role with impact', 'Health benefits', 'Bonus scheme'],
@@ -251,9 +251,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: true,
     // For remote, we can still list a preferred or common timezone/region, or company HQ's city.
     // Let's say they are hiring for someone who can work with clients in Jawa Barat region.
-    provinceId: 'province_jabar_id', // Target candidate region or company branch
-    cityId: 'city_bandung_id',       // Target candidate city or company branch
-    applicationDeadline: new Date('2024-09-20T23:59:59Z'),
+    provinceId: 'BANTEN', // Target candidate region or company branch
+    cityId: 'Serang',       // Target candidate city or company branch
+    applicationDeadline: new Date('2025-09-20T23:59:59Z'),
     isActive: true,
     requirements: ['3+ years in Customer Success or Account Management', 'Excellent communication skills', 'Tech-savvy', 'CRM experience'],
     benefits: ['Fully remote', 'Competitive package', 'Career growth', 'Dynamic team'],
@@ -275,9 +275,9 @@ export const jobPostings: JobPostingMockData[] = [
     isRemote: false, // On-site at Jakarta HQ
     latitude: -6.225, // Jakarta Selatan
     longitude: 106.82,
-    provinceId: 'province_dki_id',
-    cityId: 'city_jkt_selatan_id',
-    applicationDeadline: new Date('2024-09-25T23:59:59Z'),
+    provinceId: 'DKI',
+    cityId: 'Jakarta Pusat',
+    applicationDeadline: new Date('2025-09-25T23:59:59Z'),
     isActive: true,
     requirements: ['5+ years DevOps experience', 'AWS or GCP', 'Terraform, Ansible', 'CI/CD tools (Jenkins, GitLab CI)', 'Monitoring tools (Prometheus, Grafana)'],
     benefits: ['Challenging projects', 'Health & wellness benefits', 'Professional development fund'],

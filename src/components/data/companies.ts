@@ -36,7 +36,7 @@ export const companies: CompanyMockData[] = [
     name: 'Tech Solutions Inc.',
     description: 'Leading provider of innovative software solutions for businesses. We empower companies to achieve digital transformation with our cutting-edge technology and expert services. Join us to build the future of tech!',
     website: 'https://techsolutions.example.com',
-    logo: 'https://via.placeholder.com/200x100/4A90E2/FFFFFF?Text=TechSolutions',
+    logo: 'https://i.pinimg.com/1200x/79/72/d8/7972d81c70d4683dbf95af7394cde745.jpg',
     industry: 'TECHNOLOGY',
     size: CompanySize.MEDIUM,
     foundedYear: 2010,
@@ -57,7 +57,7 @@ export const companies: CompanyMockData[] = [
     name: 'Creative Media House',
     description: 'A dynamic digital marketing agency specializing in content creation, social media management, and branding. We help brands tell their story and connect with their audience in meaningful ways.',
     website: 'https://creativemedia.example.com',
-    logo: 'https://via.placeholder.com/200x100/F5A623/FFFFFF?Text=CreativeMedia',
+    logo: 'https://i.pinimg.com/1200x/65/19/c2/6519c27bdac4f60ce300d49a43b31a2f.jpg',
     industry: 'MARKETING', // Using JobCategory enum values, assuming they broadly cover industries
     size: CompanySize.SMALL,
     foundedYear: 2015,
@@ -78,7 +78,7 @@ export const companies: CompanyMockData[] = [
     name: 'GreenGrow Farms',
     description: 'Sustainable agriculture company dedicated to producing high-quality organic produce. We are committed to environmental stewardship and supporting local communities.',
     website: 'https://greengrow.example.com',
-    logo: 'https://via.placeholder.com/200x100/7ED321/FFFFFF?Text=GreenGrow',
+    logo: 'https://i.pinimg.com/1200x/7a/cd/75/7acd7589837642c8b44bc0627c8549de.jpg',
     industry: 'OTHER', // Could be 'AGRICULTURE' if you add it to JobCategory or have a separate industry enum
     size: CompanySize.STARTUP,
     foundedYear: 2018,
