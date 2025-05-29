@@ -20,38 +20,45 @@ datasource db {
 model User {
   id                String    @id @default(cuid())
   email             String    @unique
-  password          String?   // Null for social login users
+  password          String?
   firstName         String?
   lastName          String?
-  profileImage      String?   // Profile photo URL
+  profileImage      String?
   isEmailVerified   Boolean   @default(false)
   emailVerificationToken String?
   emailVerificationExpires DateTime?
   resetPasswordToken String?
   resetPasswordExpires DateTime?
   role              UserRole  @default(USER)
-  provider          AuthProvider @default(EMAIL) // EMAIL, GOOGLE, FACEBOOK, TWITTER
-  providerId        String?   // Social login ID
+  provider          AuthProvider @default(EMAIL)
+  providerId        String?
 
-  // Personal Information (required for job seekers)
+  // Personal Information
   dateOfBirth       DateTime?
   gender            Gender?
   lastEducation     Education?
   currentAddress    String?
   phoneNumber       String?
 
-  // Location for job recommendations
+  // Location 
   latitude          Float?
   longitude         Float?
-  city              String?
-  country           String?
+  
+  // Foreign keys for location
+  provinceId        String?
+  province          Province? @relation(fields: [provinceId], references: [id])
+  cityId            String?
+  city              City?     @relation(fields: [cityId], references: [id])
+  
+  
+  country           String    @default("Indonesia")
 
-  // Timestamps
+  
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   lastLoginAt       DateTime?
 
-  // Relations
+  // Relations (existing)
   company           Company?
   jobApplications   JobApplication[]
   savedJobs         SavedJob[]
@@ -60,9 +67,9 @@ model User {
   certificates      Certificate[]
   companyReviews    CompanyReview[]
   interviewSchedules InterviewSchedule[]
+  notifications     Notification[]
 
   @@map("users")
-  Notification Notification[]
 }
 
 model Company {
@@ -70,7 +77,7 @@ model Company {
   name              String
   description       String?
   website           String?
-  logo              String?   // Company logo URL
+  logo              String?
   industry          String?
   size              CompanySize?
   foundedYear       Int?
@@ -78,13 +85,18 @@ model Company {
   // Contact Information
   email             String?
   phone             String?
-
-  // Address
   address           String?
-  city              String?
-  country           String?
+
+  // Location 
   latitude          Float?
   longitude         Float?
+  
+  // Foreign keys for location
+  provinceId        String?
+  province          Province? @relation(fields: [provinceId], references: [id])
+  cityId            String?
+  city              City?     @relation(fields: [cityId], references: [id])
+  country           String    @default("Indonesia")
 
   // Social Media
   linkedinUrl       String?
@@ -92,7 +104,7 @@ model Company {
   twitterUrl        String?
   instagramUrl      String?
 
-  // Admin user (one-to-one relationship)
+  // Admin user
   adminId           String    @unique
   admin             User      @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
@@ -116,7 +128,7 @@ model JobPosting {
   id                String    @id @default(cuid())
   title             String
   description       String
-  banner            String?   // Job banner image URL
+  banner            String?
 
   // Job Details
   category          JobCategory
@@ -126,28 +138,33 @@ model JobPosting {
   salaryMax         Int?
   salaryCurrency    String    @default("IDR")
 
-  // Location
-  city              String
-  country           String    @default("Indonesia")
+  // Location - UPDATED APPROACH
   isRemote          Boolean   @default(false)
   latitude          Float?
   longitude         Float?
+  
+  // Foreign keys for location
+  provinceId        String?
+  province          Province? @relation(fields: [provinceId], references: [id])
+  cityId            String?
+  city              City?     @relation(fields: [cityId], references: [id])
+  country           String    @default("Indonesia")
 
   // Application Settings
   applicationDeadline DateTime?
   isActive          Boolean   @default(true)
-  isPriority        Boolean   @default(false) // For premium job postings
+  isPriority        Boolean   @default(false)
 
   // Requirements & Benefits
-  requirements      String[]  // Array of requirements
-  benefits          String[]  // Array of benefits
-  tags              String[]  // Job tags for better searchability
+  requirements      String[]
+  benefits          String[]
+  tags              String[]
 
   // Company relation
   companyId         String
   company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  // Pre-selection test (optional)
+  // Pre-selection test
   preSelectionTestId String?
   preSelectionTest  PreSelectionTest? @relation(fields: [preSelectionTestId], references: [id])
 
@@ -211,6 +228,52 @@ model SavedJob {
 
   @@unique([userId, jobPostingId])
   @@map("saved_jobs")
+}
+
+// ============================================
+// LOCATION MANAGEMENT
+// ===========================================
+
+model Province {
+  id        String @id @default(cuid())
+  name      String @unique
+  code      String @unique // e.g., "DKI", "JABAR"
+  latitude  Float?
+  longitude Float?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  cities    City[]
+  users     User[]
+  companies Company[]
+  jobPostings JobPosting[]
+  
+  @@map("provinces")
+}
+
+model City {
+  id         String @id @default(cuid())
+  name       String
+  type       CityType @default(CITY) // CITY, REGENCY
+  latitude   Float?
+  longitude  Float?
+  
+  // Province relation
+  provinceId String
+  province   Province @relation(fields: [provinceId], references: [id])
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  users      User[]
+  companies  Company[]
+  jobPostings JobPosting[]
+  
+  @@unique([name, provinceId]) // Same city name can exist in different provinces
+  @@map("cities")
 }
 
 // ============================================
@@ -693,3 +756,8 @@ enum EmploymentStatus {
    CERTIFICATE_ISSUED
    // ... other types
  }
+
+enum CityType {
+  CITY      // Kota
+  REGENCY   // Kabupaten
+}
