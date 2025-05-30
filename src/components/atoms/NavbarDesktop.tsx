@@ -63,7 +63,7 @@ export function NavbarDesktop() {
             {/* User Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full text-white">
                   {user.avatar ? (
                     <Image
                       src={user.avatar}
@@ -73,7 +73,7 @@ export function NavbarDesktop() {
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-full  flex items-center justify-center">
                       <User className="h-5 w-5 text-white" />
                     </div>
                   )}

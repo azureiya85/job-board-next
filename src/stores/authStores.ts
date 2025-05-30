@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { UserRole as PrismaUserRole } from '@prisma/client'; 
 
-interface User {
+interface User { 
   id: string;
   email: string;
   name?: string;
-  role: 'USER' | 'ADMIN' | 'DEVELOPER';
+  role: PrismaUserRole; 
   avatar?: string;
-  isVerified: boolean;
+  isVerified: boolean; 
 }
 
 interface AuthState {
@@ -19,7 +20,7 @@ interface AuthState {
 interface AuthActions {
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
-  login: (user: User) => void;
+  login: (user: User) => void; 
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
 }

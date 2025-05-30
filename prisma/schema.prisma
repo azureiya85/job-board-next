@@ -20,6 +20,11 @@ datasource db {
 model User {
   id                String    @id @default(cuid())
   email             String    @unique
+  emailVerified     DateTime? 
+  name              String?   
+  image             String?   
+  
+  // Your existing fields
   password          String?
   firstName         String?
   lastName          String?
@@ -50,15 +55,18 @@ model User {
   cityId            String?
   city              City?     @relation(fields: [cityId], references: [id])
   
-  
   country           String    @default("Indonesia")
 
-  
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   lastLoginAt       DateTime?
 
-  // Relations (existing)
+  // NextAuth Relations
+  accounts          Account[]
+  sessions          Session[]
+  authenticators    Authenticator[]
+
+  // Your existing relations
   company           Company?
   jobApplications   JobApplication[]
   savedJobs         SavedJob[]
@@ -70,6 +78,62 @@ model User {
   notifications     Notification[]
 
   @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Optional: For WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+  @@map("authenticators")
 }
 
 model Company {
