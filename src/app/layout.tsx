@@ -1,3 +1,4 @@
+import { Navbar } from "./atoms/Navbar";
 import "./globals.css";
 import { Metadata } from "next";
 
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning> 
       <body className="antialiased"> 
+        <Navbar />
         <main>{children}</main>
       </body>
     </html>

@@ -4,7 +4,10 @@ export type JobPostingFeatured = Pick<
   JobPosting,
   | 'id'
   | 'title'
+  | 'description'       
   | 'employmentType'
+  | 'experienceLevel'   
+  | 'category'          
   | 'isRemote'
   | 'createdAt'
   | 'publishedAt'
@@ -12,8 +15,12 @@ export type JobPostingFeatured = Pick<
   | 'salaryMax'
   | 'salaryCurrency'
   | 'isPriority'
+  | 'tags'  
+  | 'benefits' 
+  | 'requirements' 
+  | 'applicationDeadline'           
 > & {
-  company: Pick<Company, 'name' | 'logo' | 'size'> | null; 
+  company: Pick<Company, 'name' | 'logo' | 'size'> | null;
   city: Pick<City, 'name'> | null;
   province: Pick<Province, 'name'> | null;
 };

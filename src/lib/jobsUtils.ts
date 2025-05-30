@@ -54,8 +54,6 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
       { city: { name: { contains: locationQuery, mode: 'insensitive' } } },
       { province: { name: { contains: locationQuery, mode: 'insensitive' } } },
     ];
-    // If isRemote is also true, and a locationQuery is provided, it might be contradictory.
-    // Decide on the desired behavior: prioritize remote, or allow remote jobs in a specific location (e.g., "Remote in Jakarta")
   }
 
   // --- Filter Logic ---
@@ -85,7 +83,7 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
   // Default sorting if not provided
   const effectiveOrderBy = orderBy || [{ isPriority: 'desc' }, { publishedAt: 'desc' }, { createdAt: 'desc' }];
 
-  try {
+   try {
     const jobs = await prisma.jobPosting.findMany({
       where,
       orderBy: effectiveOrderBy,
@@ -94,7 +92,10 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
       select: {
         id: true,
         title: true,
+        description: true,      
         employmentType: true,
+        experienceLevel: true,   
+        category: true,          
         isRemote: true,
         createdAt: true,
         publishedAt: true,
@@ -102,11 +103,12 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
         salaryMax: true,
         salaryCurrency: true,
         isPriority: true,
+        tags: true,              
         company: {
           select: {
             name: true,
             logo: true,
-            size: true, // Need to select company size if filtering by it and want to display it
+            size: true,
           },
         },
         city: {
@@ -119,20 +121,18 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
             name: true,
           },
         },
-        // Select other fields  for a full job listing page
-        // description: true, 
-        // requirements: true,
-        // benefits: true,
-        // category: true,
-        // experienceLevel: true,
+         requirements: true, 
+         benefits: true,
       },
     });
-    return jobs as JobPostingFeatured[];
+    // The cast should be safe if your select matches JobPostingFeatured
+    return jobs as unknown as JobPostingFeatured[];
   } catch (error) {
     console.error("Failed to fetch jobs with filters:", error);
     return [];
   }
 }
+
 
 // Specific function for latest featured jobs 
 export async function getLatestFeaturedJobs(count: number = 5): Promise<JobPostingFeatured[]> {

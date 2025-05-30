@@ -4,7 +4,7 @@ import { JobPostingFeatured, GetJobsParams } from '@/types';
 import { JobCategory, EmploymentType, ExperienceLevel, CompanySize } from '@prisma/client';
 
 // --- Types for the store ---
-interface JobSearchState { 
+export interface JobSearchState { 
   // UI Input States
   searchTermInput: string;      
   locationSearchInput: string;  
@@ -29,7 +29,7 @@ interface JobSearchState {
   take?: number;
 }
 
-interface JobSearchActions {
+export interface JobSearchActions {
   setSearchTermInput: (term: string) => void;
   setLocationSearchInput: (location: string) => void;
   setCategories: (categories: JobCategory[]) => void;
@@ -70,8 +70,8 @@ const initialState: JobSearchState = {
 async function fetchJobsFromApi(params: GetJobsParams): Promise<{jobs: JobPostingFeatured[], totalCount: number}> {
   const query = new URLSearchParams();
   // Map from GetJobsParams to query params
-  if (params.jobTitle) query.set('jobTitle', params.jobTitle); // Use jobTitle from GetJobsParams
-  if (params.locationQuery) query.set('locationQuery', params.locationQuery); // Use locationQuery
+  if (params.jobTitle) query.set('jobTitle', params.jobTitle); 
+  if (params.locationQuery) query.set('locationQuery', params.locationQuery); 
   if (params.categories && params.categories.length > 0) params.categories.forEach(cat => query.append('categories', cat));
   if (params.employmentTypes && params.employmentTypes.length > 0) params.employmentTypes.forEach(type => query.append('employmentTypes', type));
   if (params.experienceLevels && params.experienceLevels.length > 0) params.experienceLevels.forEach(level => query.append('experienceLevels', level));
@@ -117,7 +117,7 @@ export const useJobSearchStore = create<JobSearchState & JobSearchActions>()(
         }));
       },
       setPageSize: (size) => {
-        set(() => ({ // No need for 'state' if not used directly
+        set(() => ({ 
           pageSize: size,
           take: size,
           currentPage: 1,
@@ -156,10 +156,10 @@ export const useJobSearchStore = create<JobSearchState & JobSearchActions>()(
       resetFilters: () => {
         set({ 
           ...initialUiAndFilterState, // Reset to the UI and filter initial state
-          // jobs: [], // Optionally clear jobs on reset, or let fetchJobs handle it
-          // error: null,
+           jobs: [],
+           error: null,
         });
-        // get().fetchJobs(); // Trigger fetch after resetting if desired
+        get().fetchJobs(); // Fetch jobs with the initial state
       },
     }),
   )
