@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +18,8 @@ import {
   ArrowRight,
   Star,
   TrendingUp,
-  Bookmark
+  Bookmark,
+  LogIn
 } from 'lucide-react';
 import { JobPostingFeatured } from '@/types';
 import { formatRelativeDate, formatSalary, cn } from '@/lib/utils';
@@ -26,12 +30,15 @@ import {
   categoryLabels
 } from '@/lib/jobConstants';
 import { EmploymentType } from '@prisma/client';
+import { useAuthStore } from '@/stores/authStores';
 
 interface JobDetailsHeaderProps {
   job: JobPostingFeatured;
 }
 
 export function JobDetailsHeader({ job }: JobDetailsHeaderProps) {
+  const { isAuthenticated } = useAuthStore();
+  
   const location = job.isRemote
     ? 'Remote'
     : job.city?.name
@@ -149,13 +156,27 @@ export function JobDetailsHeader({ job }: JobDetailsHeaderProps) {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-primary to-primary/90 hover:from-accent hover:to-accent/95 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer group"
-          >
-            Apply Now
-            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </Button>
+          {isAuthenticated ? (
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-accent hover:to-accent/95 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer group"
+            >
+              Apply Now
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+            </Button>
+          ) : (
+            <Button
+              asChild
+              size="lg"
+              variant="secondary"
+              className="bg-muted hover:bg-primary/70 hover:text-white text-muted-foreground border-2 border-muted-foreground/20 font-semibold px-8 py-3 rounded-lg transition-all duration-300 cursor-pointer group"
+            >
+              <Link href="/auth/login">
+                <LogIn className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform duration-300" />
+                Sign In To Apply
+              </Link>
+            </Button>
+          )}
 
           <Button
             variant="outline"
