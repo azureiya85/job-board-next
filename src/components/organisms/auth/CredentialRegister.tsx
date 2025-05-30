@@ -10,18 +10,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  UserPlus, 
-  Loader2, 
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  UserPlus,
+  Loader2,
   User as UserIcon,
-  ChevronsRight
+  ChevronsRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { registerUserAction } from '@/lib/actions/authActions'; 
 
 export function CredentialsRegister() {
   const [showPassword, setShowPassword] = useState(false);
@@ -40,34 +41,19 @@ export function CredentialsRegister() {
     },
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (formData: RegisterFormData) => { 
     startTransition(async () => {
       try {
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
+        const result = await registerUserAction(formData);
 
-        const result = await response.json();
-
-        if (!response.ok) {
-          if (response.status === 409) { // Conflict - email exists
+        if (!result.success) {
+          if (result.message.includes('already exists')) {
             toast.error('Registration failed', {
-              description: result.message || 'This email is already registered.',
+              description: 'This email is already registered. Please try signing in instead.',
             });
-            form.setError('email', { type: 'manual', message: 'This email is already registered.' });
-          } else if (result.errors) { // Zod validation errors
-            const errors = result.errors;
-            if (errors.firstName) form.setError('firstName', { message: errors.firstName[0] });
-            if (errors.lastName) form.setError('lastName', { message: errors.lastName[0] });
-            if (errors.email) form.setError('email', { message: errors.email[0] });
-            if (errors.password) form.setError('password', { message: errors.password[0] });
-            if (errors.confirmPassword) form.setError('confirmPassword', { message: errors.confirmPassword[0] });
-            toast.error('Registration failed', {
-              description: 'Please check the form for errors.',
+            form.setError('email', {
+              type: 'manual',
+              message: 'This email is already registered.',
             });
           } else {
             toast.error('Registration failed', {
@@ -80,12 +66,14 @@ export function CredentialsRegister() {
         toast.success('Registration successful!', {
           description: result.message || 'Please check your email to verify your account.',
         });
-        
-        // Redirect to a page informing the user to check their email
-        router.push('/auth/verify-email'); // Or a success page with next steps
 
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('pendingVerificationEmail', formData.email);
+        }
+
+        router.push('/auth/verify-email');
       } catch (error) {
-        console.error('Registration error:', error);
+        console.error('Registration submission client-side error:', error);
         toast.error('Something went wrong', {
           description: 'Could not complete registration. Please try again later.',
         });
@@ -120,9 +108,19 @@ export function CredentialsRegister() {
               <Label htmlFor="firstName">First Name</Label>
               <div className="relative mt-1">
                 <UserIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="firstName" placeholder="John" {...form.register('firstName')} className="pl-10 h-11" />
+                <Input 
+                  id="firstName" 
+                  placeholder="John" 
+                  {...form.register('firstName')} 
+                  className="pl-10 h-11"
+                  disabled={isPending}
+                />
               </div>
-              {form.formState.errors.firstName && <p className="text-sm text-red-600 mt-1">{form.formState.errors.firstName.message}</p>}
+              {form.formState.errors.firstName && (
+                <p className="text-sm text-red-600 mt-1">
+                  {form.formState.errors.firstName.message}
+                </p>
+              )}
             </motion.div>
 
             {/* Last Name */}
@@ -130,9 +128,19 @@ export function CredentialsRegister() {
               <Label htmlFor="lastName">Last Name</Label>
               <div className="relative mt-1">
                 <UserIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="lastName" placeholder="Doe" {...form.register('lastName')} className="pl-10 h-11" />
+                <Input 
+                  id="lastName" 
+                  placeholder="Doe" 
+                  {...form.register('lastName')} 
+                  className="pl-10 h-11"
+                  disabled={isPending}
+                />
               </div>
-              {form.formState.errors.lastName && <p className="text-sm text-red-600 mt-1">{form.formState.errors.lastName.message}</p>}
+              {form.formState.errors.lastName && (
+                <p className="text-sm text-red-600 mt-1">
+                  {form.formState.errors.lastName.message}
+                </p>
+              )}
             </motion.div>
           </div>
 
@@ -141,9 +149,20 @@ export function CredentialsRegister() {
             <Label htmlFor="email">Email Address</Label>
             <div className="relative mt-1">
               <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input id="email" type="email" placeholder="you@example.com" {...form.register('email')} className="pl-10 h-11" />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="you@example.com" 
+                {...form.register('email')} 
+                className="pl-10 h-11"
+                disabled={isPending}
+              />
             </div>
-            {form.formState.errors.email && <p className="text-sm text-red-600 mt-1">{form.formState.errors.email.message}</p>}
+            {form.formState.errors.email && (
+              <p className="text-sm text-red-600 mt-1">
+                {form.formState.errors.email.message}
+              </p>
+            )}
           </motion.div>
 
           {/* Password */}
@@ -157,12 +176,22 @@ export function CredentialsRegister() {
                 placeholder="••••••••"
                 {...form.register('password')}
                 className="pl-10 pr-10 h-11"
+                disabled={isPending}
               />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-primary">
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)} 
+                className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-primary disabled:opacity-50"
+                disabled={isPending}
+              >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            {form.formState.errors.password && <p className="text-sm text-red-600 mt-1">{form.formState.errors.password.message}</p>}
+            {form.formState.errors.password && (
+              <p className="text-sm text-red-600 mt-1">
+                {form.formState.errors.password.message}
+              </p>
+            )}
           </motion.div>
 
           {/* Confirm Password */}
@@ -176,25 +205,51 @@ export function CredentialsRegister() {
                 placeholder="••••••••"
                 {...form.register('confirmPassword')}
                 className="pl-10 pr-10 h-11"
+                disabled={isPending}
               />
-              <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-primary">
+              <button 
+                type="button" 
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+                className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-primary disabled:opacity-50"
+                disabled={isPending}
+              >
                 {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            {form.formState.errors.confirmPassword && <p className="text-sm text-red-600 mt-1">{form.formState.errors.confirmPassword.message}</p>}
+            {form.formState.errors.confirmPassword && (
+              <p className="text-sm text-red-600 mt-1">
+                {form.formState.errors.confirmPassword.message}
+              </p>
+            )}
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="pt-3">
-            <Button type="submit" disabled={isPending} className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold shadow-lg hover:shadow-xl">
-              {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
-              Register
+            <Button 
+              type="submit" 
+              disabled={isPending} 
+              className="w-full h-11 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold shadow-lg hover:shadow-xl disabled:opacity-50"
+            >
+              {isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <UserPlus className="mr-2 h-4 w-4" />
+              )}
+              {isPending ? 'Creating Account...' : 'Register'}
             </Button>
           </motion.div>
         </form>
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-center text-sm text-muted-foreground pt-3">
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ delay: 0.5 }} 
+          className="text-center text-sm text-muted-foreground pt-3"
+        >
           Already have an account?{' '}
-          <Link href="/auth/login" className="font-medium text-primary hover:underline">
+          <Link 
+            href="/auth/login" 
+            className="font-medium text-primary hover:underline"
+          >
             Sign In <ChevronsRight className="inline h-4 w-4 -mt-0.5" />
           </Link>
         </motion.div>

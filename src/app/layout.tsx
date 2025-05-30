@@ -1,4 +1,4 @@
-import { Navbar } from "../components/atoms/Navbar";
+import { Navbar } from "../components/molecules/navbar/Navbar";
 import "./globals.css";
 import { Metadata } from "next";
 

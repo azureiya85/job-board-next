@@ -1,30 +1,30 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation'; 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn, getSession } from 'next-auth/react';
 import { useAuthStore } from '@/stores/authStores';
 import { loginSchema, LoginFormData } from '@/lib/zodValidation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  LogIn, 
-  Loader2, 
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  LogIn,
+  Loader2,
   Shield,
   TrendingUp,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import Link from 'next/link'; 
+import Link from 'next/link';
+import { loginWithCredentialsAction } from '@/lib/actions/authActions'; 
 
 export function CredentialsLogin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,55 +43,47 @@ export function CredentialsLogin() {
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (formData: LoginFormData) => { 
     startTransition(async () => {
       try {
         setLoading(true);
-        
-        const result = await signIn('credentials', {
-          email: data.email,
-          password: data.password,
-          redirect: false,
-        });
 
-        if (result?.error) {
-          if (result.error === "CredentialsSignin") {
-             toast.error('Invalid credentials', {
-                description: 'Please check your email and password and try again.',
-             });
-          } else {
-            toast.error('Login failed', {
-              description: result.error || 'An unknown error occurred.',
-            });
-          }
+        // Call the server action
+        const result = await loginWithCredentialsAction(formData);
+
+        if (!result.success || !result.user) {
+          // Handle errors based on the action's response
+          const errorMessage = result.error || 'An unknown error occurred.';
+          const errorDescription = result.errorType === 'CredentialsSignin'
+            ? 'Please check your email and password and try again.'
+            : errorMessage;
+            
+          toast.error(result.errorType === 'CredentialsSignin' ? 'Invalid credentials' : 'Login failed', {
+            description: errorDescription,
+          });
           return;
         }
 
-        if (result?.ok && !result.error) {
-          const session = await getSession(); 
-          
-          if (session?.user) {
-            loginToStore({
-              id: session.user.id,
-              email: session.user.email!, 
-              name: session.user.name || undefined,
-              role: session.user.role, 
-              avatar: session.user.image || undefined,
-              isVerified: session.user.isEmailVerified,
-            });
-          }
-          
-          toast.success('Welcome back!', {
-            description: 'You have successfully signed in.',
-          });
+        // If action is successful and user data is returned
+        loginToStore({
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name,
+          role: result.user.role,
+          avatar: result.user.avatar,
+          isVerified: result.user.isVerified,
+        });
 
-          router.push(callbackUrl);
-          router.refresh();
-        }
+        toast.success('Welcome back!', {
+          description: 'You have successfully signed in.',
+        });
+
+        router.push(callbackUrl);
+        router.refresh(); 
       } catch (error) {
-        console.error('Login error:', error);
+        console.error('Login submission client-side error:', error);
         toast.error('Something went wrong', {
-          description: 'Please try again later.',
+          description: 'An unexpected client-side error occurred. Please try again later.',
         });
       } finally {
         setLoading(false);

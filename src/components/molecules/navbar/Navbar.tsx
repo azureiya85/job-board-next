@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Cog } from 'lucide-react';
 import { useNavbarStore } from '@/stores/navbarStore';
-import { NavbarDesktop } from './NavbarDesktop';
-import { NavbarMobile } from './NavbarMobile';
+import { NavbarDesktop } from '../../atoms/navbar/NavbarDesktop';
+import { NavbarMobile } from '../../atoms/navbar/NavbarMobile';
 
 export function Navbar() {
   const { isScrolled, setIsScrolled } = useNavbarStore();
