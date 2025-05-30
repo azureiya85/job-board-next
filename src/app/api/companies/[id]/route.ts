@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json(
@@ -20,25 +20,12 @@ export async function GET(
     const company = await prisma.company.findUnique({
       where: { id },
       include: {
-        province: {
-          select: { id: true, name: true, code: true }
-        },
-        city: {
-          select: { id: true, name: true, type: true }
-        },
-        admin: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            profileImage: true,
-          }
-        },
+        province: { select: { id: true, name: true, code: true } },
+        city: { select: { id: true, name: true, type: true } },
+        admin: { select: { id: true, name: true, email: true, profileImage: true } },
         _count: {
           select: {
-            jobPostings: {
-              where: { isActive: true }
-            },
+            jobPostings: { where: { isActive: true } },
             companyReviews: true,
           }
         }
@@ -46,13 +33,9 @@ export async function GET(
     });
 
     if (!company) {
-      return NextResponse.json(
-        { error: 'Company not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 });
     }
 
-    // Calculate average rating from reviews
     const reviewStats = await prisma.companyReview.aggregate({
       where: { companyId: id },
       _avg: {
@@ -82,9 +65,6 @@ export async function GET(
     return NextResponse.json(companyWithStats);
   } catch (error) {
     console.error('Error fetching company:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

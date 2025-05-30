@@ -2,6 +2,7 @@
 
 import { MapPin, Users, Calendar, Globe, Mail, Phone, Star } from 'lucide-react';
 import { useCompanyProfileStore } from '@/stores/companyProfileStores';
+import Image from 'next/image';
 
 interface CompanyProfileOverviewProps {
   className?: string;
@@ -59,11 +60,15 @@ export default function CompanyProfileOverview({ className }: CompanyProfileOver
         <div className="flex items-start gap-6">
           {company.logo && (
             <div className="flex-shrink-0">
-              <img
-                src={company.logo}
-                alt={`${company.name} logo`}
-                className="w-20 h-20 rounded-lg object-cover border"
-              />
+           <Image
+  src={company.logo}
+  alt={`${company.name} logo`}
+  width={80}
+  height={80}
+  className="w-20 h-20 rounded-lg object-cover border"
+  style={{ width: '80px', height: '80px' }}
+  unoptimized={company.logo.startsWith('http')}
+/>
             </div>
           )}
           

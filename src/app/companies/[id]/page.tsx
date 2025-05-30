@@ -3,12 +3,6 @@ import { notFound } from 'next/navigation';
 import type { CompanyDetailed } from '@/types';
 import type { Metadata } from 'next'; 
 
-interface CompanyPageProps {
-  params: {
-    id: string; 
-  };
-}
-
 async function getCompanyData(companyId: string): Promise<CompanyDetailed | null> { 
   try {
     if (!companyId) {
@@ -40,29 +34,26 @@ async function getCompanyData(companyId: string): Promise<CompanyDetailed | null
   }
 }
 
-export default async function CompanyProfilePage({ params }: CompanyPageProps) {
-  const { id } = params; // CHANGED: from companyId to id
-  console.log(`[CompanyProfilePage] Page loaded for company ID: ${id}`); // Added log
-  const companyData = await getCompanyData(id); // Pass the correct id
+export default async function CompanyProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  console.log(`[CompanyProfilePage] Page loaded for company ID: ${id}`);
+  const companyData = await getCompanyData(id);
 
   if (!companyData) {
     notFound();
   }
 
-  return (
-    <CompanyProfileTemplate company={companyData} />
-  );
+  return <CompanyProfileTemplate company={companyData} />;
 }
 
-export async function generateMetadata(
-  { params }: CompanyPageProps): Promise<Metadata> {
-  const { id } = params; 
-  const company = await getCompanyData(id); 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+
+  const company = await getCompanyData(id);
 
   if (!company) {
-    return {
-      title: 'Company Not Found',
-    };
+    return { title: 'Company Not Found' };
   }
 
   return {

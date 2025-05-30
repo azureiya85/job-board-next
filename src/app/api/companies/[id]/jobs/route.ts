@@ -16,35 +16,31 @@ const companyJobsSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const { searchParams } = request.nextUrl;
     const paramsObject = Object.fromEntries(searchParams.entries());
-    
+
     const validationResult = companyJobsSchema.safeParse(paramsObject);
-    
+
     if (!validationResult.success) {
       return NextResponse.json({
         error: 'Invalid query parameters',
-        details: validationResult.error.format()
+        details: validationResult.error.format(),
       }, { status: 400 });
     }
 
     const { take, skip, category, employmentType, experienceLevel, search } = validationResult.data;
 
-    // Verify company exists
     const company = await prisma.company.findUnique({
       where: { id },
       select: { id: true, name: true }
     });
 
     if (!company) {
-      return NextResponse.json(
-        { error: 'Company not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 });
     }
 
     const where = {
@@ -73,21 +69,13 @@ export async function GET(
               industry: true,
             }
           },
-          province: {
-            select: { id: true, name: true, code: true }
-          },
-          city: {
-            select: { id: true, name: true, type: true }
-          },
-          _count: {
-            select: {
-              applications: true
-            }
-          }
+          province: { select: { id: true, name: true, code: true } },
+          city: { select: { id: true, name: true, type: true } },
+          _count: { select: { applications: true } }
         },
         orderBy: [
           { isPriority: 'desc' },
-          { createdAt: 'desc' }
+          { createdAt: 'desc' },
         ],
         take,
         skip,
@@ -96,10 +84,7 @@ export async function GET(
     ]);
 
     return NextResponse.json({
-      company: {
-        id: company.id,
-        name: company.name
-      },
+      company: { id: company.id, name: company.name },
       jobPostings,
       pagination: {
         total: totalCount,
@@ -111,9 +96,6 @@ export async function GET(
     });
   } catch (error) {
     console.error('Error fetching company jobs:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

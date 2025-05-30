@@ -5,6 +5,7 @@ import { useCompanyProfileStore } from '@/stores/companyProfileStores';
 import CompanyProfileOverview from '@/components/organisms/companies/CompanyProfileOverview';
 import CompanyProfileJobs from '@/components/organisms/companies/CompanyProfleJobs';
 import type { CompanyDetailed } from '@/types'; 
+import Image from 'next/image';
 
 interface CompanyProfileTemplateProps {
   company: CompanyDetailed; 
@@ -49,11 +50,13 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
       {/* Hero Banner */}
       <div className="relative h-56 md:h-64 bg-gradient-to-r from-blue-600 to-indigo-700 overflow-hidden">
         {company.banner ? (
-          <img
-            src={company.banner}
-            alt={`${company.name} banner`}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+         <Image
+  src={company.banner}
+  alt={`${company.name} banner`}
+  fill
+  className="object-cover"
+  unoptimized={company.banner.startsWith('http')}
+/>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700"></div>
         )}
@@ -64,11 +67,14 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
             <div className="flex items-end gap-4 md:gap-6">
               {company.logo && (
                 <div className="flex-shrink-0">
-                  <img
-                    src={company.logo}
-                    alt={`${company.name} logo`}
-                    className="w-20 h-20 md:w-28 md:h-28 rounded-lg object-cover border-2 md:border-4 border-white shadow-xl bg-white"
-                  />
+<Image
+  src={company.logo}
+  alt={`${company.name} logo`}
+  width={112} 
+  height={112}
+  className="rounded-lg object-cover border-2 md:border-4 border-white shadow-xl bg-white w-20 h-20 md:w-28 md:h-28"
+  unoptimized={company.logo.startsWith('http')}
+/>
                 </div>
               )}
               <div className="flex-1 min-w-0 py-2">
