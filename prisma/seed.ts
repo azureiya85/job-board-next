@@ -165,6 +165,7 @@ async function seedCompanies() {
         description: companyData.description,
         website: companyData.website,
         logo: companyData.logo,
+        banner: companyData.banner,
         industry: companyData.industry,
         size: companyData.size as CompanySize,
         foundedYear: companyData.foundedYear,

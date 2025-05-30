@@ -11,7 +11,7 @@ export interface GetJobsParams {
   orderBy?: Prisma.JobPostingOrderByWithRelationInput | Prisma.JobPostingOrderByWithRelationInput[];
   
   // Search Parameters
-  jobTitle?: string; // Search by job title
+  jobTitle?: string; // Search by job title and description
   locationQuery?: string; // Search by city or province name
 
   // Filter Parameters
@@ -19,15 +19,28 @@ export interface GetJobsParams {
   employmentTypes?: EmploymentType[];
   experienceLevels?: ExperienceLevel[];
   companySizes?: CompanySize[]; 
-  isRemote?: boolean; 
-  // Add other filter parameters as needed: salaryMin, salaryMax etc.
+  isRemote?: boolean;
+  companyId?: string; // Filter by specific company
+  
+  // Response options
+  includePagination?: boolean; // Whether to return pagination info
 }
 
-export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFeatured[]> {
+// Return type for paginated results
+export interface GetJobsResult {
+  jobs: JobPostingFeatured[];
+  pagination?: {
+    total: number;
+    page: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+// Helper function to build the where clause
+const buildWhereClause = (params: GetJobsParams): Prisma.JobPostingWhereInput => {
   const {
-    take,
-    skip,
-    orderBy,
     jobTitle,
     locationQuery,
     categories,
@@ -35,6 +48,7 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
     experienceLevels,
     companySizes,
     isRemote,
+    companyId,
   } = params;
 
   const where: Prisma.JobPostingWhereInput = {
@@ -43,17 +57,39 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
 
   // --- Search Logic ---
   if (jobTitle) {
-    where.title = {
-      contains: jobTitle,
-      mode: 'insensitive', // Case-insensitive search
-    };
+    where.OR = [
+      { title: { contains: jobTitle, mode: 'insensitive' } },
+      { description: { contains: jobTitle, mode: 'insensitive' } },
+    ];
   }
 
   if (locationQuery) {
-    where.OR = [
-      { city: { name: { contains: locationQuery, mode: 'insensitive' } } },
-      { province: { name: { contains: locationQuery, mode: 'insensitive' } } },
+    const locationConditions: Prisma.JobPostingWhereInput[] = [
+      { 
+        city: { 
+          is: { 
+            name: { contains: locationQuery, mode: 'insensitive' } 
+          } 
+        } 
+      },
+      { 
+        province: { 
+          is: { 
+            name: { contains: locationQuery, mode: 'insensitive' } 
+          } 
+        } 
+      },
     ];
+
+    if (where.OR) {
+      where.AND = [
+        { OR: where.OR },
+        { OR: locationConditions },
+      ];
+      delete where.OR;
+    } else {
+      where.OR = locationConditions;
+    }
   }
 
   // --- Filter Logic ---
@@ -73,71 +109,190 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
     where.isRemote = isRemote;
   }
 
-  // Filtering by CompanySize requires a join
+  // Filtering by CompanySize 
   if (companySizes && companySizes.length > 0) {
     where.company = {
-      size: { in: companySizes },
+      is: {
+        size: { in: companySizes },
+      },
     };
   }
 
-  // Default sorting if not provided
+  // Filter by specific company
+  if (companyId) {
+    where.companyId = companyId;
+  }
+
+  return where;
+};
+
+export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFeatured[] | GetJobsResult> {
+  const {
+    take = 10,
+    skip = 0,
+    orderBy,
+    includePagination = false,
+  } = params;
+
   const effectiveOrderBy = orderBy || [{ isPriority: 'desc' }, { publishedAt: 'desc' }, { createdAt: 'desc' }];
 
-   try {
-    const jobs = await prisma.jobPosting.findMany({
-      where,
-      orderBy: effectiveOrderBy,
-      take,
-      skip,
-      select: {
-        id: true,
-        title: true,
-        description: true,      
-        employmentType: true,
-        experienceLevel: true,   
-        category: true,          
-        isRemote: true,
-        createdAt: true,
-        publishedAt: true,
-        salaryMin: true,
-        salaryMax: true,
-        salaryCurrency: true,
-        isPriority: true,
-        tags: true,              
-        company: {
+  const where = buildWhereClause(params);
+
+  try {
+    if (includePagination) {
+      // Return jobs with pagination info
+      const [jobs, totalCount] = await Promise.all([
+        prisma.jobPosting.findMany({
+          where,
+          orderBy: effectiveOrderBy,
+          take,
+          skip,
           select: {
-            name: true,
-            logo: true,
-            size: true,
+            id: true,
+            title: true,
+            description: true,      
+            employmentType: true,
+            experienceLevel: true,   
+            category: true,          
+            isRemote: true,
+            createdAt: true,
+            publishedAt: true,
+            salaryMin: true,
+            salaryMax: true,
+            salaryCurrency: true,
+            isPriority: true,
+            tags: true,              
+            company: {
+              select: {
+                id: true,
+                name: true,
+                logo: true,
+                size: true,
+                industry: true,
+              },
+            },
+            city: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            province: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            requirements: true, 
+            benefits: true,
+            _count: {
+              select: {
+                applications: true,
+              },
+            },
           },
+        }),
+        prisma.jobPosting.count({ where }),
+      ]);
+
+      return {
+        jobs: jobs as unknown as JobPostingFeatured[],
+        pagination: {
+          total: totalCount,
+          page: Math.floor(skip / take) + 1,
+          totalPages: Math.ceil(totalCount / take),
+          hasNext: skip + take < totalCount,
+          hasPrev: skip > 0,
         },
-        city: {
-          select: {
-            name: true,
+      };
+    } else {
+      const jobs = await prisma.jobPosting.findMany({
+        where,
+        orderBy: effectiveOrderBy,
+        take,
+        skip,
+        select: {
+          id: true,
+          title: true,
+          description: true,      
+          employmentType: true,
+          experienceLevel: true,   
+          category: true,          
+          isRemote: true,
+          createdAt: true,
+          publishedAt: true,
+          salaryMin: true,
+          salaryMax: true,
+          salaryCurrency: true,
+          isPriority: true,
+          tags: true,              
+          company: {
+            select: {
+              id: true,
+              name: true,
+              logo: true,
+              size: true,
+              industry: true,
+            },
           },
-        },
-        province: {
-          select: {
-            name: true,
+          city: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
+          province: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          requirements: true, 
+          benefits: true,
         },
-         requirements: true, 
-         benefits: true,
-      },
-    });
-    // The cast should be safe if your select matches JobPostingFeatured
-    return jobs as unknown as JobPostingFeatured[];
+      });
+
+      return jobs as unknown as JobPostingFeatured[];
+    }
   } catch (error) {
     console.error("Failed to fetch jobs with filters:", error);
+    if (includePagination) {
+      return {
+        jobs: [],
+        pagination: {
+          total: 0,
+          page: 1,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
+      };
+    }
     return [];
   }
 }
 
-
 // Specific function for latest featured jobs 
 export async function getLatestFeaturedJobs(count: number = 5): Promise<JobPostingFeatured[]> {
-  return getJobs({
+  const result = await getJobs({
     take: count,
     orderBy: [{ isPriority: 'desc' }, { publishedAt: 'desc' }, { createdAt: 'desc' }],
+    includePagination: false,
   });
+  
+  return result as JobPostingFeatured[];
+}
+
+// Utility function specifically for company job listings with pagination
+export async function getCompanyJobs(
+  companyId: string, 
+  params: Omit<GetJobsParams, 'companyId'> = {}
+): Promise<GetJobsResult> {
+  const result = await getJobs({
+    ...params,
+    companyId,
+    includePagination: true,
+  });
+  
+  return result as GetJobsResult;
 }

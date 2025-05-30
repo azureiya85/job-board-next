@@ -47,6 +47,10 @@ export function JobDetailsHeader({ job }: JobDetailsHeaderProps) {
 
   const postedDate = formatRelativeDate(job.publishedAt || job.createdAt);
   const salaryDisplay = formatSalary(job.salaryMin, job.salaryMax, job.salaryCurrency);
+        
+const companyProfileUrl = job.company?.id ? `/companies/${job.company.id}` : null;
+
+    
 
   return (
     <Card className={cn(
@@ -77,14 +81,22 @@ export function JobDetailsHeader({ job }: JobDetailsHeaderProps) {
             )}
           </div>
 
-          <div className="flex-1 min-w-0">
+             <div className="flex-1 min-w-0">
             <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">
               {job.title}
             </h1>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl text-muted-foreground font-medium">
-                {job.company?.name || 'Confidential Company'}
-              </h2>
+              {companyProfileUrl ? (
+                <Link href={companyProfileUrl} className="group">
+                  <h2 className="text-xl text-muted-foreground font-medium group-hover:text-primary group-hover:underline transition-colors">
+                    {job.company?.name || 'Confidential Company'}
+                  </h2>
+                </Link>
+              ) : (
+                <h2 className="text-xl text-muted-foreground font-medium">
+                  {job.company?.name || 'Confidential Company'}
+                </h2>
+              )}
               {job.isPriority && (
                 <Badge className="bg-gradient-to-r from-tertiary-500 to-tertiary-600 text-white border-0">
                   <TrendingUp className="mr-1 h-3 w-3" />

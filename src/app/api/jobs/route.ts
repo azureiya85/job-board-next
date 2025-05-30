@@ -3,12 +3,13 @@ import { getJobs, GetJobsParams } from '@/lib/jobsUtils';
 import { z } from 'zod';
 import { JobCategory, EmploymentType, ExperienceLevel, CompanySize } from '@prisma/client';
 
-// Define the Zod schema for validating and parsing search parameters
+// Updated Zod schema to include companyId
 const searchParamsSchema = z.object({
   take: z.coerce.number().int().positive().optional(),
   skip: z.coerce.number().int().nonnegative().optional(),
   jobTitle: z.string().optional(),
   locationQuery: z.string().optional(),
+  companyId: z.string().optional(), // Added for company filtering
   categories: z.preprocess(
     (val) => (typeof val === 'string' ? val.split(',') : val), 
     z.array(z.nativeEnum(JobCategory)).optional()
@@ -35,8 +36,9 @@ const searchParamsSchema = z.object({
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const paramsObject: Record<string, string | string[]> = {};
+  
   for (const [key, value] of searchParams.entries()) {
-    // Check if the key could be an array type based on the schema (categories, employmentTypes, etc.)
+    // Check if the key could be an array type based on the schema
     if (['categories', 'employmentTypes', 'experienceLevels', 'companySizes'].includes(key)) {
         const existing = paramsObject[key];
         if (existing) {
@@ -46,41 +48,30 @@ export async function GET(request: NextRequest) {
                 paramsObject[key] = [existing, value];
             }
         } else {
-            paramsObject[key] = [value]; // Start as array if it's a known array key
+            paramsObject[key] = [value];
         }
     } else {
-        paramsObject[key] = value; // Single value
+        paramsObject[key] = value;
     }
   }
-  // A more direct way for known array keys with Zod's preprocess:
-  // const paramsObject = {
-  //   take: searchParams.get('take'),
-  //   skip: searchParams.get('skip'),
-  //   jobTitle: searchParams.get('jobTitle'),
-  //   locationQuery: searchParams.get('locationQuery'),
-  //   isRemote: searchParams.get('isRemote'),
-  //   categories: searchParams.getAll('categories'), // Zod preprocess will handle empty array
-  //   employmentTypes: searchParams.getAll('employmentTypes'),
-  //   experienceLevels: searchParams.getAll('experienceLevels'),
-  //   companySizes: searchParams.getAll('companySizes'),
-  // };
-
 
   const validationResult = searchParamsSchema.safeParse(paramsObject);
 
   if (!validationResult.success) {
     console.error("Zod Validation Errors:", validationResult.error.format());
-    return NextResponse.json({ error: "Invalid query parameters", details: validationResult.error.format() }, { status: 400 });
+    return NextResponse.json({ 
+      error: "Invalid query parameters", 
+      details: validationResult.error.format() 
+    }, { status: 400 });
   }
 
   const {
-    take, skip, jobTitle, locationQuery, isRemote,
+    take, skip, jobTitle, locationQuery, isRemote, companyId, // Added companyId
     categories, 
     employmentTypes,
     experienceLevels,
     companySizes,
   } = validationResult.data;
-
 
   const paramsForDb: GetJobsParams = {
     take,
@@ -92,6 +83,7 @@ export async function GET(request: NextRequest) {
     experienceLevels,
     companySizes,
     isRemote,
+    companyId, 
     orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
   };
 

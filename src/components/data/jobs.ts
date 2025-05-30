@@ -34,7 +34,7 @@ export interface JobPostingMockData {
   requirements: string[];
   benefits: string[];
   tags: string[];
-  companyId: string; // Link to Company ID
+  companyId: string; 
   // preSelectionTestId?: string; // TODO: Add later 
   createdAt: Date;
   updatedAt: Date;

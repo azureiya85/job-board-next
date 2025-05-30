@@ -1,0 +1,74 @@
+import { create } from 'zustand';
+import type { CompanyDetailed } from '@/types';
+import type { EmploymentType, ExperienceLevel } from '@prisma/client'; 
+
+export interface JobPostingInStore {
+  id: string;
+  title: string;
+  type: EmploymentType; 
+  workType: string;
+  location: string;
+  minSalary?: number;
+  maxSalary?: number;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  applicationDeadline?: string;
+  experienceLevel: ExperienceLevel; 
+}
+
+interface CompanyProfileState {
+  company: CompanyDetailed | null;
+  jobs: JobPostingInStore[];
+  activeTab: 'overview' | 'jobs';
+  isLoadingCompany: boolean;
+  isLoadingJobs: boolean;
+  jobsPage: number;
+  hasMoreJobs: boolean;
+  totalJobs: number;
+  setCompany: (company: CompanyDetailed) => void;
+  setJobs: (jobs: JobPostingInStore[]) => void;
+  addJobs: (jobs: JobPostingInStore[]) => void;
+  setActiveTab: (tab: 'overview' | 'jobs') => void;
+  setLoadingCompany: (loading: boolean) => void;
+  setLoadingJobs: (loading: boolean) => void;
+  setJobsPagination: (page: number, hasMore: boolean, total: number) => void;
+  resetStore: () => void;
+}
+
+export const useCompanyProfileStore = create<CompanyProfileState>((set) => ({
+  company: null,
+  jobs: [],
+  activeTab: 'overview',
+  isLoadingCompany: false,
+  isLoadingJobs: false,
+  jobsPage: 1,
+  hasMoreJobs: true,
+  totalJobs: 0,
+  setCompany: (company) => set({ company }),
+  setJobs: (jobs) => set({ jobs }),
+  addJobs: (newJobs) => set((state) => ({
+    jobs: [...state.jobs, ...newJobs]
+  })),
+  setActiveTab: (tab) => set({ activeTab: tab }),
+  setLoadingCompany: (loading) => set({ isLoadingCompany: loading }),
+  setLoadingJobs: (loading) => set({ isLoadingJobs: loading }),
+  setJobsPagination: (page, hasMore, total) => set({
+    jobsPage: page,
+    hasMoreJobs: hasMore,
+    totalJobs: total
+  }),
+  resetStore: () => set({
+    company: null,
+    jobs: [],
+    activeTab: 'overview',
+    isLoadingCompany: false,
+    isLoadingJobs: false,
+    jobsPage: 1,
+    hasMoreJobs: true,
+    totalJobs: 0
+  })
+}));

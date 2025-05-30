@@ -140,6 +140,7 @@ model Company {
   id                String    @id @default(cuid())
   name              String
   description       String?
+  banner            String?
   website           String?
   logo              String?
   industry          String?

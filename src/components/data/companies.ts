@@ -7,6 +7,7 @@ export interface CompanyMockData {
   id: string;
   name: string;
   description?: string;
+  banner?: string;
   website?: string;
   logo?: string;
   industry?: string;
@@ -24,7 +25,7 @@ export interface CompanyMockData {
   facebookUrl?: string;
   twitterUrl?: string;
   instagramUrl?: string;
-  adminId: string; // Link to User ID with COMPANY_ADMIN role
+  adminId: string; 
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,6 +35,7 @@ export const companies: CompanyMockData[] = [
   {
     id: mockCuid('company', 1),
     name: 'Tech Solutions Inc.',
+    banner: `https://i.pinimg.com/1200x/aa/8e/c0/aa8ec02bdd6609ac23f47a3e2a90e4a9.jpg`,
     description: 'Leading provider of innovative software solutions for businesses. We empower companies to achieve digital transformation with our cutting-edge technology and expert services. Join us to build the future of tech!',
     website: 'https://techsolutions.example.com',
     logo: 'https://i.pinimg.com/1200x/79/72/d8/7972d81c70d4683dbf95af7394cde745.jpg',
@@ -55,6 +57,7 @@ export const companies: CompanyMockData[] = [
   {
     id: mockCuid('company', 2),
     name: 'Creative Media House',
+    banner: `https://i.pinimg.com/1200x/aa/8e/c0/aa8ec02bdd6609ac23f47a3e2a90e4a9.jpg`,
     description: 'A dynamic digital marketing agency specializing in content creation, social media management, and branding. We help brands tell their story and connect with their audience in meaningful ways.',
     website: 'https://creativemedia.example.com',
     logo: 'https://i.pinimg.com/1200x/65/19/c2/6519c27bdac4f60ce300d49a43b31a2f.jpg',
@@ -76,6 +79,7 @@ export const companies: CompanyMockData[] = [
   {
     id: mockCuid('company', 3),
     name: 'GreenGrow Farms',
+    banner: `https://i.pinimg.com/1200x/aa/8e/c0/aa8ec02bdd6609ac23f47a3e2a90e4a9.jpg`,
     description: 'Sustainable agriculture company dedicated to producing high-quality organic produce. We are committed to environmental stewardship and supporting local communities.',
     website: 'https://greengrow.example.com',
     logo: 'https://i.pinimg.com/1200x/7a/cd/75/7acd7589837642c8b44bc0627c8549de.jpg',

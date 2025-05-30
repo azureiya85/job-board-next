@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { JobPostingFeatured } from '@/types';
 import { JobDetailsHeader } from '@/components/templates/jobs/JobDetailsHeader';
 import { JobDetailsContent } from '@/components/templates/jobs/JobDetailsContent';
+import { JobDetailsRelated } from '@/components/templates/jobs/JobDetailsRelated';
 
 interface JobDetailPageProps {
   params: Promise<{ id: string }>; 
@@ -46,6 +47,9 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <JobDetailsHeader job={job} />
         <JobDetailsContent job={job} />
+        <div className="mt-8">
+          <JobDetailsRelated currentJob={job} />
+        </div>
       </div>
     </div>
   );
