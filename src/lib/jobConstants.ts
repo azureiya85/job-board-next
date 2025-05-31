@@ -39,3 +39,9 @@ export const categoryLabels: Record<string, string> = {
   RETAIL: 'Retail',
   OTHER: 'Other',
 };
+
+export const workTypeLabels: Record<string, string> = {
+  ON_SITE: 'On-site',
+  REMOTE: 'Remote',
+  HYBRID: 'Hybrid',
+};
