@@ -3,8 +3,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { UserRole as PrismaUserRole } from '@prisma/client'; 
 
 interface User {
-  lastName: string;
-  firstName: string; 
+  lastName?: string;
+  firstName?: string; 
   id: string;
   email: string;
   name?: string;

@@ -158,7 +158,7 @@ export function CredentialsLogin() {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                className="pl-10 h-12 border-2 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
+                className="pl-10 h-12 border-2 focus:ring-2 focus:ring-primary/90 transition-all duration-300"
                 {...form.register('email')}
               />
             </div>
@@ -190,7 +190,7 @@ export function CredentialsLogin() {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
-                className="pl-10 pr-10 h-12 border-2 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
+                className="pl-10 pr-10 h-12 border-2 focus:ring-2 focus:ring-primary/90 transition-all duration-300"
                 {...form.register('password')}
               />
               <button
