@@ -24,8 +24,8 @@ export function JobDetailsSection() {
   const [loadMoreCount, setLoadMoreCount] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const JOBS_PER_LOAD = 10; // Display 10 jobs per load
-  const MAX_LOAD_MORE_CYCLES = 4; // Allow up to 4 load more cycles
+  const JOBS_PER_LOAD = 10; 
+  const MAX_LOAD_MORE_CYCLES = 4; 
 
   const totalPages = Math.ceil(totalJobs / pageSize);
   
@@ -63,8 +63,7 @@ export function JobDetailsSection() {
   };
 
   const handleSwitchToTraditionalPagination = () => {
-    // Switch to page 2 to enable traditional pagination
-    setCurrentPage(2);
+    setCurrentPage(3);
     setLoadMoreCount(0);
   };
 

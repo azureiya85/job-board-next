@@ -11,8 +11,8 @@ export interface GetJobsParams {
   orderBy?: Prisma.JobPostingOrderByWithRelationInput | Prisma.JobPostingOrderByWithRelationInput[];
   
   // Search Parameters
-  jobTitle?: string; // Search by job title and description
-  locationQuery?: string; // Search by city or province name
+  jobTitle?: string; 
+  locationQuery?: string; 
 
   // Filter Parameters
   categories?: JobCategory[];
