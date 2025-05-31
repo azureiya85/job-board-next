@@ -114,9 +114,9 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
           </div>
         )}
         {/* Overlay*/}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
         
-        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
+        {/* <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-end gap-4 md:gap-6">
               <div className="flex-1 min-w-0 py-2">
@@ -131,7 +131,7 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
               </div>
             </div>
           </div>
-        </div>
+        </div> */} 
       </div>
 
       {/* Navigation Tabs */}

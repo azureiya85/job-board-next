@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Briefcase, Loader2 } from 'lucide-react';
 import { JobPostingFeatured } from '@/types'; 
 import { RelatedJobCard } from '@/components/molecules/jobs/RelatedJobCard';
 import { AnimatePresence } from 'framer-motion';
-import { buildRelatedJobsQuery, filterRelatedJobs, parseJobsResponse } from '@/lib/filterHelper';
+import { buildRelatedJobsQuery, filterRelatedJobs, parseJobsResponse } from '@/lib/attemptFilterHelper';
 import { useHorizontalScroll, createScrollIndicators } from '@/lib/scrollHelper';
 
 interface JobDetailsRelatedProps {
