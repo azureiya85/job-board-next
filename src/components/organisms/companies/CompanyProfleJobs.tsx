@@ -87,7 +87,7 @@ export default function CompanyProfileJobs({ companyId, className }: CompanyProf
   try {
     setLoadingJobs(true);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const itemsPerPage = 10; // Or a constant from your store/config
+    const itemsPerPage = 30; 
     const skip = (pageToFetch - 1) * itemsPerPage;
     const take = itemsPerPage;
 

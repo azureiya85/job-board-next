@@ -27,6 +27,8 @@ export interface JobSearchState {
   pageSize: number;
   skip?: number; 
   take?: number;
+   hybridMode: 'loadmore' | 'pagination';
+  loadedJobsBuffer: JobPostingFeatured[];
 }
 
 export interface JobSearchActions {
@@ -54,7 +56,7 @@ const initialUiAndFilterState = {
   isRemote: undefined,
   currentPage: 1,
   pageSize: 10,
-  take: 10, 
+  take: 30, 
   skip: 0,  
 };
 
@@ -64,6 +66,8 @@ const initialState: JobSearchState = {
   isLoading: false,
   error: null,
   totalJobs: 0,
+  hybridMode: 'loadmore',
+  loadedJobsBuffer: [],
 };
 
 // --- API Fetching Logic ---
@@ -125,33 +129,31 @@ export const useJobSearchStore = create<JobSearchState & JobSearchActions>()(
         }));
       },
 
-      fetchJobs: async () => {
-        const { 
-          searchTermInput, locationSearchInput, categories, employmentTypes, 
-          experienceLevels, companySizes, isRemote, take, skip 
-        } = get();
+   fetchJobs: async () => {
+  const { 
+    searchTermInput, locationSearchInput, categories, employmentTypes, 
+    experienceLevels, companySizes, isRemote 
+  } = get();
 
-        set({ isLoading: true, error: null });
-        try {
-          // Map store state (searchTermInput, locationSearchInput) to API params (jobTitle, locationQuery)
-          const apiParams: GetJobsParams = {
-            jobTitle: searchTermInput || undefined, 
-            locationQuery: locationSearchInput || undefined, 
-            categories: categories && categories.length > 0 ? categories : undefined,
-            employmentTypes: employmentTypes && employmentTypes.length > 0 ? employmentTypes : undefined,
-            experienceLevels: experienceLevels && experienceLevels.length > 0 ? experienceLevels : undefined,
-            companySizes: companySizes && companySizes.length > 0 ? companySizes : undefined,
-            isRemote,
-            take,
-            skip,
-          };
-          const { jobs, totalCount } = await fetchJobsFromApi(apiParams);
-          set({ jobs, totalJobs: totalCount, isLoading: false });
-        } catch (err: unknown) {
-          const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-          set({ error: errorMessage, isLoading: false, jobs: [] });
-        }
-      },
+  set({ isLoading: true, error: null });
+  try {
+    // Map store state to API params - WITHOUT take/skip limits
+    const apiParams: GetJobsParams = {
+      jobTitle: searchTermInput || undefined, 
+      locationQuery: locationSearchInput || undefined, 
+      categories: categories && categories.length > 0 ? categories : undefined,
+      employmentTypes: employmentTypes && employmentTypes.length > 0 ? employmentTypes : undefined,
+      experienceLevels: experienceLevels && experienceLevels.length > 0 ? experienceLevels : undefined,
+      companySizes: companySizes && companySizes.length > 0 ? companySizes : undefined,
+      isRemote,
+    };
+    const { jobs, totalCount } = await fetchJobsFromApi(apiParams);
+    set({ jobs, totalJobs: totalCount, isLoading: false });
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+    set({ error: errorMessage, isLoading: false, jobs: [] });
+  }
+},
 
       resetFilters: () => {
         set({ 

@@ -9,7 +9,7 @@ const searchParamsSchema = z.object({
   skip: z.coerce.number().int().nonnegative().optional(),
   jobTitle: z.string().optional(),
   locationQuery: z.string().optional(),
-  companyId: z.string().optional(), // Added for company filtering
+  companyId: z.string().optional(), 
   categories: z.preprocess(
     (val) => (typeof val === 'string' ? val.split(',') : val), 
     z.array(z.nativeEnum(JobCategory)).optional()
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
   }
 
   const {
-    take, skip, jobTitle, locationQuery, isRemote, companyId, // Added companyId
+    take, skip, jobTitle, locationQuery, isRemote, companyId, 
     categories, 
     employmentTypes,
     experienceLevels,

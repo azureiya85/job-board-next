@@ -128,7 +128,7 @@ const buildWhereClause = (params: GetJobsParams): Prisma.JobPostingWhereInput =>
 
 export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFeatured[] | GetJobsResult> {
   const {
-    take = 10,
+    take = 3000,
     skip = 0,
     orderBy,
     includePagination = false,
@@ -140,7 +140,6 @@ export async function getJobs(params: GetJobsParams = {}): Promise<JobPostingFea
 
   try {
     if (includePagination) {
-      // Return jobs with pagination info
       const [jobs, totalCount] = await Promise.all([
         prisma.jobPosting.findMany({
           where,
