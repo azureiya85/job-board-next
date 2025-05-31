@@ -170,4 +170,42 @@ export const users: UserMockData[] = [
     createdAt: new Date('2023-03-10T12:00:00Z'),
     updatedAt: new Date('2023-03-10T12:00:00Z'),
   },
+  {
+  id: mockCuid('user_admin', 4), // Admin for "FinanceFirst Consulting"
+  email: 'admin.financefirst@example.com',
+  password: 'hashed_password_admin4',
+  firstName: 'Rina',
+  lastName: 'Handayani',
+  profileImage: 'https://via.placeholder.com/150/FF6347/FFFFFF?Text=AdminRina',
+  isEmailVerified: true,
+  role: UserRole.COMPANY_ADMIN,
+  provider: AuthProvider.EMAIL,
+  phoneNumber: '081234567893',
+  currentAddress: 'Jl. Thamrin No. 15, Jakarta Pusat',
+  latitude: -6.195, // Jakarta Pusat
+  longitude: 106.82,
+  createdAt: new Date('2023-01-12T09:00:00Z'),
+  updatedAt: new Date('2023-01-12T09:00:00Z'),
+  provinceId: 'province_dki_id', // DKI Jakarta
+  cityId: 'city_jkt_pusat_id',   // Jakarta Pusat
+},
+{
+  id: mockCuid('user_admin', 5), // Admin for "EduTech Innovations"
+  email: 'admin.edutech@example.com',
+  password: 'hashed_password_admin5',
+  firstName: 'Arief',
+  lastName: 'Nugroho',
+  profileImage: 'https://via.placeholder.com/150/4169E1/FFFFFF?Text=AdminArief',
+  isEmailVerified: true,
+  role: UserRole.COMPANY_ADMIN,
+  provider: AuthProvider.EMAIL,
+  phoneNumber: '081234567894',
+  currentAddress: 'Jl. Asia Afrika No. 88, Bandung',
+  latitude: -6.92, // Bandung
+  longitude: 107.61,
+  createdAt: new Date('2023-03-15T09:00:00Z'),
+  updatedAt: new Date('2023-03-15T09:00:00Z'),
+  provinceId: 'province_jabar_id', // Jawa Barat
+  cityId: 'city_bandung_id',      // Bandung
+}
 ];

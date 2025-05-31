@@ -80,7 +80,6 @@ export type CompanyWithLocation = Company & {
 export type CompanyDetailed = Company & {
   province: Province | null;
   city: City | null;
-  banner?: string | null; 
   admin: {
     id: string;
     name: string | null;

@@ -1,4 +1,3 @@
-      
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
@@ -48,7 +47,32 @@ export async function GET(request: NextRequest) {
     const [companies, totalCount] = await Promise.all([
       prisma.company.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          banner: true, 
+          website: true,
+          logo: true,
+          industry: true,
+          size: true,
+          foundedYear: true,
+          email: true,
+          phone: true,
+          address: true,
+          latitude: true,
+          longitude: true,
+          provinceId: true,
+          cityId: true,
+          country: true,
+          linkedinUrl: true,
+          facebookUrl: true,
+          twitterUrl: true,
+          instagramUrl: true,
+          adminId: true,
+          createdAt: true,
+          updatedAt: true,
+          // Relations
           province: {
             select: { id: true, name: true, code: true }
           },

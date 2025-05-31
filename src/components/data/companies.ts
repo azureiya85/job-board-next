@@ -97,4 +97,49 @@ export const companies: CompanyMockData[] = [
     createdAt: new Date('2023-02-11T12:00:00Z'),
     updatedAt: new Date('2023-02-11T12:00:00Z'),
   },
+  {
+  id: mockCuid('company', 4),
+  name: 'FinanceFirst Consulting',
+  banner: `https://i.pinimg.com/1200x/aa/8e/c0/aa8ec02bdd6609ac23f47a3e2a90e4a9.jpg`,
+  description: 'Premier financial consulting firm providing comprehensive accounting, tax planning, and business advisory services. We help businesses optimize their financial strategies and achieve sustainable growth.',
+  website: 'https://financefirst.example.com',
+  logo: 'https://i.pinimg.com/1200x/dd/0c/24/dd0c2451cf8394779574a977f20dcf46.jpg',
+  industry: 'FINANCE',
+  size: CompanySize.LARGE,
+  foundedYear: 2005,
+  email: 'contact@financefirst.example.com',
+  phone: '021-555-0404',
+  address: 'Jl. Thamrin No. 15, Jakarta Pusat',
+  latitude: -6.195, // Jakarta Pusat
+  longitude: 106.82,
+  provinceId: 'province_dki_id', // DKI Jakarta
+  cityId: 'city_jkt_pusat_id',   // Jakarta Pusat
+  linkedinUrl: 'https://linkedin.com/company/financefirst',
+  adminId: mockCuid('user_admin', 4),
+  createdAt: new Date('2023-01-15T09:00:00Z'),
+  updatedAt: new Date('2023-01-15T09:00:00Z'),
+},
+{
+  id: mockCuid('company', 5),
+  name: 'EduTech Innovations',
+  banner: `https://i.pinimg.com/1200x/aa/8e/c0/aa8ec02bdd6609ac23f47a3e2a90e4a9.jpg`,
+  description: 'EdTech startup revolutionizing online education with AI-powered learning platforms. We create personalized learning experiences for students of all ages and backgrounds.',
+  website: 'https://edutech-innovations.example.com',
+  logo: 'https://i.pinimg.com/1200x/37/00/1c/37001c746c952d9e9aac48e6e312c914.jpg',
+  industry: 'EDUCATION',
+  size: CompanySize.STARTUP,
+  foundedYear: 2020,
+  email: 'hello@edutech-innovations.example.com',
+  phone: '022-555-0505',
+  address: 'Jl. Asia Afrika No. 88, Bandung',
+  latitude: -6.92, // Bandung
+  longitude: 107.61,
+  provinceId: 'province_jabar_id', // Jawa Barat
+  cityId: 'city_bandung_id',      // Bandung
+  linkedinUrl: 'https://linkedin.com/company/edutech-innovations',
+  twitterUrl: 'https://twitter.com/edutechinnovations',
+  adminId: mockCuid('user_admin', 5),
+  createdAt: new Date('2023-03-20T14:00:00Z'),
+  updatedAt: new Date('2023-03-20T14:00:00Z'),
+}
 ];

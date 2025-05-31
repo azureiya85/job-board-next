@@ -19,10 +19,41 @@ export async function GET(
 
     const company = await prisma.company.findUnique({
       where: { id },
-      include: {
-        province: { select: { id: true, name: true, code: true } },
-        city: { select: { id: true, name: true, type: true } },
-        admin: { select: { id: true, name: true, email: true, profileImage: true } },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        banner: true, 
+        website: true,
+        logo: true,
+        industry: true,
+        size: true,
+        foundedYear: true,
+        email: true,
+        phone: true,
+        address: true,
+        latitude: true,
+        longitude: true,
+        provinceId: true,
+        cityId: true,
+        country: true,
+        linkedinUrl: true,
+        facebookUrl: true,
+        twitterUrl: true,
+        instagramUrl: true,
+        adminId: true,
+        createdAt: true,
+        updatedAt: true,
+        // Relations
+        province: { 
+          select: { id: true, name: true, code: true } 
+        },
+        city: { 
+          select: { id: true, name: true, type: true } 
+        },
+        admin: { 
+          select: { id: true, name: true, email: true, profileImage: true } 
+        },
         _count: {
           select: {
             jobPostings: { where: { isActive: true } },

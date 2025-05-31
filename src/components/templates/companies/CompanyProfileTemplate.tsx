@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCompanyProfileStore } from '@/stores/companyProfileStores';
 import CompanyProfileOverview from '@/components/organisms/companies/CompanyProfileOverview';
 import CompanyProfileJobs from '@/components/organisms/companies/CompanyProfleJobs';
@@ -21,6 +21,9 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
     totalJobs: jobsCountFromStore
   } = useCompanyProfileStore();
 
+  // State for handling banner image loading
+  const [bannerError, setBannerError] = useState(false);
+  const [bannerLoading, setBannerLoading] = useState(!!company.banner);
 
   useEffect(() => {
      console.log("[CompanyProfileTemplate] Received company prop:", JSON.stringify(company, null, 2));
@@ -29,6 +32,10 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
     } else {
         console.error("[CompanyProfileTemplate] useEffect - company prop is null or undefined, cannot set in store.");
     }
+    
+    // Reset banner states when company changes
+    setBannerError(false);
+    setBannerLoading(!!company.banner);
     
     return () => {
       console.log('[CompanyProfileTemplate] useEffect - resetting store on unmount.');
@@ -45,38 +52,73 @@ export default function CompanyProfileTemplate({ company, className }: CompanyPr
     ? jobsCountFromStore
     : company.stats.activeJobs;
 
+  const handleBannerError = () => {
+    console.log(`[CompanyProfileTemplate] Banner image failed to load: ${company.banner}`);
+    setBannerError(true);
+    setBannerLoading(false);
+  };
+
+  const handleBannerLoad = () => {
+    console.log(`[CompanyProfileTemplate] Banner image loaded successfully: ${company.banner}`);
+    setBannerError(false);
+    setBannerLoading(false);
+  };
+
+  // Add a timeout to stop loading state if onLoad doesn't fire
+  useEffect(() => {
+    if (bannerLoading && company.banner) {
+      const timeout = setTimeout(() => {
+        console.log(`[CompanyProfileTemplate] Banner loading timeout - assuming loaded: ${company.banner}`);
+        setBannerLoading(false);
+      }, 3000); 
+
+      return () => clearTimeout(timeout);
+    }
+  }, [bannerLoading, company.banner]);
+
   return (
     <div className={`min-h-screen bg-gray-100 ${className}`}>
       {/* Hero Banner */}
       <div className="relative h-56 md:h-64 bg-gradient-to-r from-blue-600 to-indigo-700 overflow-hidden">
-        {company.banner ? (
-         <Image
-  src={company.banner}
-  alt={`${company.name} banner`}
-  fill
-  className="object-cover"
-  unoptimized={company.banner.startsWith('http')}
-/>
+        {company.banner && !bannerError ? (
+          <>
+            <Image
+              src={company.banner}
+              alt={`${company.name} banner`}
+              fill
+              className="object-cover"
+              priority={true}
+              unoptimized={company.banner.startsWith('http')}
+              onError={handleBannerError}
+              onLoad={handleBannerLoad}
+            />
+            {bannerLoading && (
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center z-10">
+                <div className="text-white text-lg">Loading {company.name} banner...</div>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center">
+            {bannerError && company.banner ? (
+              <div className="text-center text-white">
+                <div className="text-lg font-medium">{company.name} Banner</div>
+                <div className="text-sm opacity-75 mt-1">Image failed to load</div>
+              </div>
+            ) : (
+              <div className="text-center text-white">
+                <div className="text-lg font-medium">{company.name}</div>
+                <div className="text-sm opacity-75 mt-1">Company Banner</div>
+              </div>
+            )}
+          </div>
         )}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        {/* Overlay*/}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
         
         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-end gap-4 md:gap-6">
-              {company.logo && (
-                <div className="flex-shrink-0">
-<Image
-  src={company.logo}
-  alt={`${company.name} logo`}
-  width={112} 
-  height={112}
-  className="rounded-lg object-cover border-2 md:border-4 border-white shadow-xl bg-white w-20 h-20 md:w-28 md:h-28"
-  unoptimized={company.logo.startsWith('http')}
-/>
-                </div>
-              )}
               <div className="flex-1 min-w-0 py-2">
                 <h1 className="text-2xl md:text-4xl font-bold text-white truncate">
                   {company.name}
