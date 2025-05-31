@@ -5,6 +5,7 @@ import { Briefcase } from 'lucide-react';
 import { useCompanyProfileStore, JobPostingInStore } from '@/stores/companyProfileStores';
 import type { JobPosting, City, Province } from '@prisma/client';
 import CompanyJobCard from '@/components/molecules/companies/CompanyJobCard';
+import CVSubmitModal from '@/components/atoms/modals/CVSubmitModal'; 
 
 interface CompanyProfileJobsProps {
   companyId: string;
@@ -91,8 +92,6 @@ export default function CompanyProfileJobs({ companyId, className }: CompanyProf
         skip: skip.toString(),
         take: take.toString(),
       });
-      // Add other filters 
-      // if (filters.category) queryParams.append('category', filters.category);
 
       const response = await fetch(
         `${apiUrl}/api/companies/${companyId}/jobs?${queryParams.toString()}`
@@ -173,38 +172,41 @@ export default function CompanyProfileJobs({ companyId, className }: CompanyProf
   }
 
   return (
-    <div className={`space-y-6 ${className}`}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Open Positions ({totalJobs})
-        </h2>
-      </div>
-      <div className="space-y-4">
-        {jobs.map((job) => (
-          <CompanyJobCard key={job.id} job={job} />
-        ))}
-      </div>
-
-      {hasMoreJobs && (
-        <div className="text-center pt-4">
-          <button
-            onClick={loadMoreJobs}
-            disabled={isLoadingJobs}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoadingJobs ? 'Loading...' : 'Load More Jobs'}
-          </button>
+    <>
+      <div className={`space-y-6 ${className}`}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Open Positions ({totalJobs})
+          </h2>
         </div>
-      )}
+        <div className="space-y-4">
+          {jobs.map((job) => (
+            <CompanyJobCard key={job.id} job={job} />
+          ))}
+        </div>
 
-      {isLoadingJobs && !initialLoad && jobs.length > 0 && (
-        <div className="text-center py-4">
-          <div className="inline-flex items-center gap-2 text-gray-500">
-            <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-            <span>Loading more jobs...</span>
+        {hasMoreJobs && (
+          <div className="text-center pt-4">
+            <button
+              onClick={loadMoreJobs}
+              disabled={isLoadingJobs}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoadingJobs ? 'Loading...' : 'Load More Jobs'}
+            </button>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+
+        {isLoadingJobs && !initialLoad && jobs.length > 0 && (
+          <div className="text-center py-4">
+            <div className="inline-flex items-center gap-2 text-gray-500">
+              <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+              <span>Loading more jobs...</span>
+            </div>
+          </div>
+        )}
+      </div>
+      <CVSubmitModal />
+    </>
   );
 }

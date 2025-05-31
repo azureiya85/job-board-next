@@ -73,5 +73,21 @@ export const resetPasswordSchema = z.object({
   path: ["confirmNewPassword"],
 });
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
+// CV Submission Schema
+export const cvSubmissionSchema = z.object({
+  expectedSalary: z.number().min(1000000, 'Minimum salary should be at least Rp 1,000,000').max(1000000000, 'Maximum salary should not exceed Rp 1,000,000,000'),
+  coverLetter: z.string().min(50, 'Cover letter should be at least 50 characters').max(2000, 'Cover letter should not exceed 2000 characters'),
+  fullName: z.string().min(2, 'Full name is required'),
+  email: z.string().email('Please enter a valid email address'),
+  phoneNumber: z.string().min(10, 'Phone number should be at least 10 digits').max(15, 'Phone number should not exceed 15 digits'),
+  currentLocation: z.string().min(2, 'Current location is required'),
+  availableStartDate: z.string().min(1, 'Available start date is required'),
+  portfolioUrl: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  linkedinUrl: z.string().url('Please enter a valid LinkedIn URL').optional().or(z.literal('')),
+});
+
+export type CVSubmissionForm = z.infer<typeof cvSubmissionSchema>;
+
 // TODO: Company Registration
 // export const companyRegisterSchema = z.object({ ... });

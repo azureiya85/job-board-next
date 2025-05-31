@@ -2,10 +2,14 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { UserRole as PrismaUserRole } from '@prisma/client'; 
 
-interface User { 
+interface User {
+  lastName: string;
+  firstName: string; 
   id: string;
   email: string;
   name?: string;
+  phoneNumber?: string;
+  currentAddress?: string;
   role: PrismaUserRole; 
   avatar?: string;
   isVerified: boolean; 

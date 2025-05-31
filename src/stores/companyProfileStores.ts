@@ -2,7 +2,16 @@ import { create } from 'zustand';
 import type { CompanyDetailed } from '@/types';
 import type { EmploymentType, ExperienceLevel } from '@prisma/client'; 
 
+// Company info for job postings
+export interface JobCompanyInfo {
+  id: string;
+  name: string;
+  logo?: string | null;
+  adminId: string;
+}
+
 export interface JobPostingInStore {
+  isPriority?: boolean;
   id: string;
   title: string;
   type: EmploymentType; 
@@ -17,7 +26,8 @@ export interface JobPostingInStore {
   createdAt: string;
   updatedAt: string;
   applicationDeadline?: string;
-  experienceLevel: ExperienceLevel; 
+  experienceLevel: ExperienceLevel;
+  company?: JobCompanyInfo;
 }
 
 interface CompanyProfileState {

@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { MapPin, Clock, DollarSign, Users, Calendar, Briefcase, ChevronDown, ChevronUp } from 'lucide-react';
+import Link from 'next/link';
+import { MapPin, Clock, DollarSign, Users, Calendar, Briefcase, ChevronDown, ChevronUp, LogIn, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { EmploymentType, ExperienceLevel } from '@prisma/client';
 import { JobPostingInStore } from '@/stores/companyProfileStores';
 import { employmentTypeLabels, experienceLevelLabels, workTypeLabels } from '@/lib/jobConstants';
+import { useAuthStore } from '@/stores/authStores';
+import { useCVModalStore } from '@/stores/CVModalStores';
 
 interface CompanyJobCardProps {
   job: JobPostingInStore;
@@ -14,6 +17,8 @@ interface CompanyJobCardProps {
 export default function CompanyJobCard({ job }: CompanyJobCardProps) {
   const [showAllRequirements, setShowAllRequirements] = useState(false);
   const [showAllBenefits, setShowAllBenefits] = useState(false);
+  const { isAuthenticated } = useAuthStore();
+  const { openModal } = useCVModalStore();
 
   const formatSalary = (minSalary?: number, maxSalary?: number) => {
     const formatNumber = (num: number) => num.toLocaleString('id-ID');
@@ -32,9 +37,9 @@ export default function CompanyJobCard({ job }: CompanyJobCardProps) {
     return employmentTypeLabels[type] || type;
   };
 
-const formatWorkType = (workType: string) => { 
-  return workTypeLabels[workType] || workType;
-};
+  const formatWorkType = (workType: string) => { 
+    return workTypeLabels[workType] || workType;
+  };
 
   const formatExperienceLevel = (level: ExperienceLevel) => {
     return experienceLevelLabels[level] || level;
@@ -46,6 +51,12 @@ const formatWorkType = (workType: string) => {
 
   const toggleBenefits = () => {
     setShowAllBenefits(!showAllBenefits);
+  };
+
+  const handleApplyClick = () => {
+    if (isAuthenticated) {
+      openModal(job);
+    }
   };
 
   return (
@@ -84,9 +95,25 @@ const formatWorkType = (workType: string) => {
             </div>
           </div>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-          Apply Now
-        </button>
+        
+        {/* Apply Button with Authentication Check */}
+        {isAuthenticated ? (
+          <button 
+            onClick={handleApplyClick}
+            className="bg-primary-600 hover:bg-accent/90 cursor-pointer text-white px-6 py-2 rounded-lg font-medium transition-colors group"
+          >
+            Apply Now
+            <ArrowRight className="ml-2 h-4 w-4 inline group-hover:translate-x-1 transition-transform duration-300" />
+          </button>
+        ) : (
+          <Link 
+            href="/auth/login"
+            className="cursor-pointer bg-gray-500 hover:bg-primary/70 text-white px-6 py-2 rounded-lg font-medium transition-colors flex items-center group"
+          >
+            <LogIn className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform duration-300" />
+            Sign In To Apply
+          </Link>
+        )}
       </div>
 
       <div className="mb-4">
