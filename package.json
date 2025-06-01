@@ -27,6 +27,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@react-email/components": "^0.0.41",
     "@supabase/supabase-js": "^2.49.8",
+    "@tiptap/react": "^2.12.0",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.6.1",

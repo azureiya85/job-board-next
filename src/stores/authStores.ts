@@ -13,6 +13,7 @@ interface User {
   role: PrismaUserRole; 
   avatar?: string;
   isVerified: boolean; 
+  companyId?: string;
 }
 
 interface AuthState {

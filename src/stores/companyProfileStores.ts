@@ -2,6 +2,11 @@ import { create } from 'zustand';
 import type { CompanyDetailed } from '@/types';
 import type { EmploymentType, ExperienceLevel } from '@prisma/client'; 
 
+// Extended tab types for company profile
+export type BaseTabId = 'overview' | 'jobs';
+export type AdminTabId = 'profile-management' | 'job-management';
+export type CompanyProfileTabId = BaseTabId | AdminTabId;
+
 // Company info for job postings
 export interface JobCompanyInfo {
   id: string;
@@ -33,7 +38,7 @@ export interface JobPostingInStore {
 interface CompanyProfileState {
   company: CompanyDetailed | null;
   jobs: JobPostingInStore[];
-  activeTab: 'overview' | 'jobs';
+  activeTab: CompanyProfileTabId; // Updated to use extended type
   isLoadingCompany: boolean;
   isLoadingJobs: boolean;
   jobsPage: number;
@@ -42,7 +47,7 @@ interface CompanyProfileState {
   setCompany: (company: CompanyDetailed) => void;
   setJobs: (jobs: JobPostingInStore[]) => void;
   addJobs: (jobs: JobPostingInStore[]) => void;
-  setActiveTab: (tab: 'overview' | 'jobs') => void;
+  setActiveTab: (tab: CompanyProfileTabId) => void; // Updated to use extended type
   setLoadingCompany: (loading: boolean) => void;
   setLoadingJobs: (loading: boolean) => void;
   setJobsPagination: (page: number, hasMore: boolean, total: number) => void;
