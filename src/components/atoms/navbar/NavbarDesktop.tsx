@@ -22,13 +22,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation'
+
 
 export function NavbarDesktop() {
   const { user, isAuthenticated, logout } = useAuthStore();
   const { navigationItems } = useNavbarStore();
+const router = useRouter();
 
   const handleLogout = () => {
     logout();
+    router.push('/');
   };
 
   return (
@@ -86,7 +90,7 @@ export function NavbarDesktop() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/profile" className="flex items-center">
+                  <Link href="/dashboard" className="flex items-center">
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </Link>

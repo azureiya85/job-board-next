@@ -31,7 +31,7 @@ export function CredentialsLogin() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const { login: loginToStore, setLoading } = useAuthStore();
 

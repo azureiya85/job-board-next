@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Gender, Education } from '@prisma/client';
 
 export const loginSchema = z.object({
   email: z
@@ -12,7 +13,6 @@ export const loginSchema = z.object({
     .max(32, "Password must be less than 32 characters"),
 });
 export type LoginFormData = z.infer<typeof loginSchema>;
-
 
 // New Registration Schema
 export const registerSchema = z.object({
@@ -88,6 +88,37 @@ export const cvSubmissionSchema = z.object({
 });
 
 export type CVSubmissionForm = z.infer<typeof cvSubmissionSchema>;
+
+// User Profile Update Schema (from users/[id]/route.ts)
+export const updateUserProfileSchema = z.object({
+  firstName: z.string().min(1, "First name is required").optional(),
+  lastName: z.string().min(1, "Last name is required").optional(),
+  dateOfBirth: z.coerce.date().nullable().optional(), 
+  gender: z.nativeEnum(Gender).nullable().optional(),
+  lastEducation: z.nativeEnum(Education).nullable().optional(),
+  currentAddress: z.string().max(255, "Address too long").nullable().optional(),
+  phoneNumber: z.string().max(20, "Phone number too long").nullable().optional(),
+  provinceId: z.string().uuid("Invalid province ID").nullable().optional(),
+  cityId: z.string().uuid("Invalid city ID").nullable().optional(),
+  country: z.string().max(100).optional().default("Indonesia"), 
+  latitude: z.number().min(-90).max(90).nullable().optional(),
+  longitude: z.number().min(-180).max(180).nullable().optional(),
+});
+
+export type UpdateUserProfileFormData = z.infer<typeof updateUserProfileSchema>;
+
+// Password Update Schema (from password/route.ts)
+export const updatePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "New password must be at least 8 characters long")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    // .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character") // Optional special char
+    ,
+});
+
+export type UpdatePasswordFormData = z.infer<typeof updatePasswordSchema>;
 
 // TODO: Company Registration
 // export const companyRegisterSchema = z.object({ ... });

@@ -117,7 +117,7 @@ export function NavbarMobile() {
                       </div>
                     </div>
                     <Link
-                      href="/profile"
+                      href="/dashboard"
                       onClick={closeMobileMenu}
                       className="flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 text-gray-900 dark:text-gray-100"
                     >
