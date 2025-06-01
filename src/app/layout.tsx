@@ -1,21 +1,21 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Navbar } from "../components/molecules/navbar/Navbar";
 import "./globals.css";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Work Vault - Your Next Career Awaits",
-  description: "Discover diverse job opportunities and connect with top employers. Work Vault helps you find your dream job or the perfect candidate.",
-};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isDashboard = pathname?.startsWith('/dashboard');
+
   return (
     <html lang="id" suppressHydrationWarning> 
       <body className="antialiased"> 
-        <Navbar />
+        {!isDashboard && <Navbar />}
         <main>{children}</main>
       </body>
     </html>

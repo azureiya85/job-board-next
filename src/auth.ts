@@ -48,6 +48,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const userFromHelper = await authHelpers.verifyCredentials(email, password);
 
           if (userFromHelper) {
+            console.log("User from helper in authorize:", userFromHelper.id, userFromHelper.email, userFromHelper.role);
             return {
               id: userFromHelper.id,
               email: userFromHelper.email!,

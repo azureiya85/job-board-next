@@ -6,24 +6,28 @@ import { z } from 'zod';
 import { updateUserProfileSchema } from '@/lib/zodValidation';
 
 export async function GET(
-  _request: Request, 
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth(); 
-  const { id } = await params;
+  const session = await auth();
+  const { id: routeParamId } = await params; 
+
+  console.log("SESSION USER ID:", session?.user?.id);
+  console.log("ROUTE PARAM ID:", routeParamId);
+  console.log("SESSION USER ROLE:", session?.user?.role);
 
   if (!session?.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Access role and other custom properties 
-  if (session.user.id !== id && session.user.role !== UserRole.ADMIN && session.user.role !== UserRole.Developer) { 
+  if (session.user.id !== routeParamId && session.user.role !== UserRole.ADMIN && session.user.role !== UserRole.Developer) {
+    console.log("FORBIDDEN: session.user.id !== routeParamId AND role is not ADMIN/Developer");
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id },
+      where: { id: routeParamId }, 
       select: {
         id: true,
         email: true,
@@ -43,9 +47,9 @@ export async function GET(
         latitude: true,
         longitude: true,
         provinceId: true,
-        province: { select: { id: true, name: true }},
+        province: { select: { id: true, name: true } },
         cityId: true,
-        city: { select: { id: true, name: true }},
+        city: { select: { id: true, name: true } },
         country: true,
         createdAt: true,
         updatedAt: true,
@@ -59,7 +63,7 @@ export async function GET(
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error(`Error fetching user ${id}:`, error);
+    console.error(`Error fetching user ${routeParamId}:`, error); // CORRECTED: Use routeParamId here
     return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
   }
 }

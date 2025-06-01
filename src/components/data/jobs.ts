@@ -104,7 +104,7 @@ export const jobPostings: JobPostingMockData[] = [
     salaryMax: 18000000,
     isRemote: true, // Remote job
     // No specific lat/long for remote, but company location can be fallback
-    provinceId: 'DKI', // Company's province
+    provinceId: 'JABAR', // Company's province
     cityId: 'Bekasi',  // Company's city
     applicationDeadline: new Date('2025-08-20T23:59:59Z'),
     isActive: true,

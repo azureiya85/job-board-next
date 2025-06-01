@@ -48,7 +48,7 @@ export const companies: CompanyMockData[] = [
     latitude: -6.225, // Approx Jakarta Selatan
     longitude: 106.82,
     provinceId: 'province_dki_id', // DKI Jakarta
-    cityId: 'city_jkt_selatan_id',  // Jakarta Selatan
+    cityId: 'city_jakarta_selatan_id',  // Jakarta Selatan
     linkedinUrl: 'https://linkedin.com/company/techsolutionsinc',
     adminId: mockCuid('user_admin', 1), // Budi Santoso
     createdAt: new Date('2023-02-02T10:00:00Z'),
@@ -113,7 +113,7 @@ export const companies: CompanyMockData[] = [
   latitude: -6.195, // Jakarta Pusat
   longitude: 106.82,
   provinceId: 'province_dki_id', // DKI Jakarta
-  cityId: 'city_jkt_pusat_id',   // Jakarta Pusat
+  cityId: 'city_jakarta_pusat_id',   // Jakarta Pusat
   linkedinUrl: 'https://linkedin.com/company/financefirst',
   adminId: mockCuid('user_admin', 4),
   createdAt: new Date('2023-01-15T09:00:00Z'),

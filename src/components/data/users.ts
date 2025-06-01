@@ -50,7 +50,7 @@ export const users: UserMockData[] = [
     updatedAt: new Date('2023-01-01T08:00:00Z'),
     lastLoginAt: new Date(),
     provinceId: 'province_dki_id', // DKI Jakarta
-    cityId: 'city_jkt_pusat_id',    // Jakarta Pusat
+    cityId: 'city_jakarta_pusat_id',    // Jakarta Pusat
   },
   // Company Admins (will be linked to companies)
   {
@@ -67,7 +67,7 @@ export const users: UserMockData[] = [
     createdAt: new Date('2023-02-01T09:00:00Z'),
     updatedAt: new Date('2023-02-01T09:00:00Z'),
     provinceId: 'province_dki_id', // DKI Jakarta
-    cityId: 'city_jkt_selatan_id', // Jakarta Selatan
+    cityId: 'city_jakarta_selatan_id', // Jakarta Selatan
   },
   {
     id: mockCuid('user_admin', 2), // Admin for "Creative Media House"
@@ -120,7 +120,7 @@ export const users: UserMockData[] = [
     latitude: -6.1805, // Jakarta Pusat
     longitude: 106.8284,
     provinceId: 'province_dki_id',
-    cityId: 'city_jkt_pusat_id',
+    cityId: 'city_jakarta_pusat_id',
     createdAt: new Date('2023-03-01T10:00:00Z'),
     updatedAt: new Date('2023-03-01T10:00:00Z'),
   },
@@ -187,7 +187,7 @@ export const users: UserMockData[] = [
   createdAt: new Date('2023-01-12T09:00:00Z'),
   updatedAt: new Date('2023-01-12T09:00:00Z'),
   provinceId: 'province_dki_id', // DKI Jakarta
-  cityId: 'city_jkt_pusat_id',   // Jakarta Pusat
+  cityId: 'city_jakarta_pusat_id',   // Jakarta Pusat
 },
 {
   id: mockCuid('user_admin', 5), // Admin for "EduTech Innovations"
