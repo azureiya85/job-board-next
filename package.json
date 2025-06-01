@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@mermaid-js/mermaid-cli": "^11.4.2",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/google-maps": "^3.2.6",
@@ -72,6 +73,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "prisma": "^6.8.2",
+    "prisma-erd-generator": "^2.0.4",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
