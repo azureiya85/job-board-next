@@ -3,7 +3,7 @@
 
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
 import { DropzoneRootProps, DropzoneInputProps } from 'react-dropzone';
-import { CVSubmissionForm } from '@/lib/zodValidation';
+import { CVSubmissionForm } from '@/lib/validations/zodAuthValidation';
 import CVSubmissionUploadCV from './forms/CVSubmisssionUploadCV';
 import CVSubmissionPersonalInfo from './forms/CVSubmissionPersonalInfo';
 import CVSubmissionCompensationAvailability from './forms/CVSubmissionCompensationAvailability';

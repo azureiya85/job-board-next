@@ -17,7 +17,7 @@ import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import {
   resetPasswordSchema,
   ResetPasswordFormData,
-} from '@/lib/zodValidation';
+} from '@/lib/validations/zodAuthValidation';
 import Link from 'next/link';
 import { PageState } from '@/stores/resetPasswordStore';
 

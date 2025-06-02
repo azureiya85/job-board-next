@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn as nextAuthServerSignIn, auth as getNextAuthServerSession } from '@/auth'; 
-import { LoginFormData, RegisterFormData } from '@/lib/zodValidation';
+import { LoginFormData, RegisterFormData } from '@/lib/validations/zodAuthValidation';
 import { AuthError } from 'next-auth';
 import { UserRole } from '@prisma/client'; 
 import { authHelpers, RegisterResult } from '@/lib/authHelpers'; 

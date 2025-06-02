@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { emailService } from '@/services/email.service'; 
-import { RegisterFormData } from '@/lib/zodValidation';
+import { RegisterFormData } from '@/lib/validations/zodAuthValidation';
 import { universalCrypto } from '@/lib/crypto';
 
 export interface AuthUser {

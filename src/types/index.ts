@@ -38,9 +38,7 @@ export interface JobPostingSearchAndFilterParams {
   employmentTypes?: EmploymentType[];
   experienceLevels?: ExperienceLevel[];
   companySizes?: CompanySize[];
-  isRemote?: boolean;
-  
-  // Added for company filtering
+  isRemote?: boolean;  
   companyId?: string;
 }
 
@@ -56,9 +54,7 @@ export interface GetJobsParams {
   employmentTypes?: EmploymentType[];
   experienceLevels?: ExperienceLevel[];
   companySizes?: CompanySize[];
-  isRemote?: boolean;
-  
-  // Added for company filtering
+  isRemote?: boolean;  
   companyId?: string;
 }
 
@@ -68,7 +64,7 @@ export type JobPostingDetailed = JobPosting & {
   province: Province | null;
 };
 
-// New Company Types
+//  Company Types
 export type CompanyWithLocation = Company & {
   province: Province | null;
   city: City | null;
@@ -130,3 +126,35 @@ export interface ApiResponse<T> {
     hasPrev: boolean;
   };
 }
+
+// Job Update Data Types
+export interface JobUpdateData {
+  title?: string;
+  description?: string;
+  requirements?: string[];
+  benefits?: string[];
+  tags?: string[];
+  category?: JobCategory;
+  employmentType?: EmploymentType;
+  workType?: string;
+  experienceLevel?: ExperienceLevel;
+  salaryMin?: number;
+  salaryMax?: number;
+  salaryCurrency?: string;
+  location?: string;
+  provinceId?: string | null;
+  cityId?: string | null;
+  applicationDeadline?: Date;
+  isPriority?: boolean;
+  isActive?: boolean;
+  isRemote?: boolean;
+  latitude?: number;
+  longitude?: number;
+  country?: string;
+  publishedAt?: Date | null;
+  preSelectionTestId?: string | null;
+  banner?: string;
+  updatedAt?: Date;
+}
+
+export type ProcessedJobUpdateData = JobUpdateData;

@@ -4,7 +4,7 @@
 import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { User, Phone, Mail, MapPin, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CVSubmissionForm } from '@/lib/zodValidation';
+import { CVSubmissionForm } from '@/lib/validations/zodAuthValidation';
 
 interface CVSubmissionPersonalInfoProps {
   register: UseFormRegister<CVSubmissionForm>;

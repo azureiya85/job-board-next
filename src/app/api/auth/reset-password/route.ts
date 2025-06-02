@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { authHelpers } from '@/lib/authHelpers';
-import { resetPasswordSchema } from '@/lib/zodValidation'; 
+import { resetPasswordSchema } from '@/lib/validations/zodAuthValidation'; 
 
 export async function POST(request: Request) {
   try {

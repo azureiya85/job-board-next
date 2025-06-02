@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from '@/auth';
 import bcrypt from 'bcryptjs';
-import { updatePasswordSchema } from '@/lib/zodValidation';
+import { updatePasswordSchema } from '@/lib/validations/zodAuthValidation';
 
 export async function PUT(
   request: Request,

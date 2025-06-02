@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { auth } from '@/auth';
 import { UserRole } from '@prisma/client';
 import { z } from 'zod';
-import { updateUserProfileSchema } from '@/lib/zodValidation';
+import { updateUserProfileSchema } from '@/lib/validations/zodUserValidation';
 
 export async function GET(
   _request: Request,

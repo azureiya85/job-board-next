@@ -9,7 +9,7 @@ import ResetPasswordState from '@/components/organisms/auth/ResetPasswordState';
 import {
   RequestPasswordResetFormData,
   ResetPasswordFormData,
-} from '@/lib/zodValidation';
+} from '@/lib/validations/zodAuthValidation';
 
 export default function ResetPasswordTemplate() {
   const router = useRouter();

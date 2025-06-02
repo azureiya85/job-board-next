@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCVModalStore } from '@/stores/CVModalStores';
 import { useAuthStore } from '@/stores/authStores';
-import { cvSubmissionSchema, CVSubmissionForm } from '@/lib/zodValidation';
+import { cvSubmissionSchema, CVSubmissionForm } from '@/lib/validations/zodApplicationValidation';
 import { CVSubmissionHeader, CVSubmissionFooter } from './CVSubmissionHeaderFooter'; 
 import CVSubmissionContent from './CVSubmissionContent'; 
 

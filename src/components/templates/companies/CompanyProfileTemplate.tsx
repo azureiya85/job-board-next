@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useCompanyProfileStore, type CompanyProfileTabId } from '@/stores/companyProfileStores';
 import { useAuthStore } from '@/stores/authStores';
 import CompanyProfileOverview from '@/components/organisms/companies/CompanyProfileOverview';
+import CompanyProfileManagement from '@/components/organisms/companies/CompanyProfileManagement';
+import CompanyJobsManagement from '@/components/organisms/companies/CompanyJobsManagement';
 import CompanyProfileJobs from '@/components/organisms/companies/CompanyProfleJobs';
 import type { CompanyDetailed } from '@/types'; 
 import Image from 'next/image';
@@ -65,27 +67,6 @@ interface Tab {
   id: CompanyProfileTabId;
   label: string;
 }
-
-// Placeholder components for new tabs
-const ProfileManagement = () => (
-  <div className="bg-white rounded-lg shadow-md p-8 text-center">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">Profile Management</h2>
-    <p className="text-gray-600 mb-6">Under Construction</p>
-    <div className="text-sm text-gray-500">
-      This section will allow you to manage your company profile and settings.
-    </div>
-  </div>
-);
-
-const JobManagement = () => (
-  <div className="bg-white rounded-lg shadow-md p-8 text-center">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">Job Management</h2>
-    <p className="text-gray-600 mb-6">Under Construction</p>
-    <div className="text-sm text-gray-500">
-      This section will allow you to post jobs and view statistics of your posted jobs.
-    </div>
-  </div>
-);
 
 export default function CompanyProfileTemplate({ company, className }: CompanyProfileTemplateProps) {
   const { 
@@ -181,7 +162,6 @@ useEffect(() => {
   };
 
   const handleBannerLoad = () => {
-    // console.log(`[CompanyProfileTemplate] Banner image loaded successfully: ${company.banner}`);
     setBannerError(false);
     setBannerLoading(false);
   };
@@ -303,7 +283,7 @@ useEffect(() => {
                     {displayJobsCount}
                   </span>
                 )}
-                {/* Add badge for admin-only tabs */}
+                {/* Badge for admin-only tabs */}
                 {(tab.id === 'profile-management' || tab.id === 'job-management') && (
                   <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     Admin
@@ -328,12 +308,12 @@ useEffect(() => {
             )}
 
             {activeTab === 'profile-management' && isCompanyAdmin && (
-              <ProfileManagement />
-            )}
+  <CompanyProfileManagement />
+)}
 
-            {activeTab === 'job-management' && isCompanyAdmin && (
-              <JobManagement />
-            )}
+{activeTab === 'job-management' && isCompanyAdmin && (
+  <CompanyJobsManagement />
+)}
           </div>
         </div>
       </main>

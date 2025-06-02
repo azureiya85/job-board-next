@@ -3,7 +3,7 @@
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
 import { DollarSign, Calendar, ExternalLink, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CVSubmissionForm } from '@/lib/zodValidation';
+import { CVSubmissionForm } from '@/lib/validations/zodAuthValidation';
 
 interface CVSubmissionCompensationAvailabilityProps {
   register: UseFormRegister<CVSubmissionForm>;

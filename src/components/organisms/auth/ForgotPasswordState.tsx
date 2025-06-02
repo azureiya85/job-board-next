@@ -17,7 +17,7 @@ import { Loader2, Mail } from 'lucide-react';
 import {
   requestPasswordResetSchema,
   RequestPasswordResetFormData,
-} from '@/lib/zodValidation';
+} from '@/lib/validations/zodAuthValidation';
 import Link from 'next/link';
 import { PageState } from '@/stores/resetPasswordStore';    
 
