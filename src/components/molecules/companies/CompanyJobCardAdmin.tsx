@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Briefcase, Calendar, Users, Edit, Trash2, Eye, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { employmentTypeLabels } from '@/lib/jobConstants'; // Assuming you have this
+import { employmentTypeLabels } from '@/lib/jobConstants'; 
 import {
   AlertDialog,
   AlertDialogAction,

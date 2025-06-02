@@ -45,7 +45,7 @@ const ALL_ITEMS_VALUE = "__ALL__";
 
 // Status action configurations
 const getStatusAction = (status: ApplicationStatus) => {
-  const configs: Record<ApplicationStatus, { icon: LucideIcon, label: string, color: string }> = { // Use LucideIcon
+  const configs: Record<ApplicationStatus, { icon: LucideIcon, label: string, color: string }> = { 
     [ApplicationStatus.PENDING]: { icon: Clock, label: 'Mark Pending', color: 'text-yellow-600' },
     [ApplicationStatus.REVIEWED]: { icon: Eye, label: 'Mark Reviewed', color: 'text-blue-600' },
     [ApplicationStatus.INTERVIEW_SCHEDULED]: { icon: Calendar, label: 'Schedule Interview', color: 'text-purple-600' },
@@ -238,7 +238,7 @@ export default function ApplicantListModal() {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Enhanced Filters Section */}
+        {/*  Filters Section */}
         <div className="p-4 border-b bg-gray-50/50">
           <div className="w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-4">
@@ -522,7 +522,7 @@ export default function ApplicantListModal() {
           </ScrollArea>
         </div>
 
-        {/* Enhanced Pagination */}
+        {/*  Pagination */}
         {!isLoadingApplicants && !applicantsError && applicantPagination.totalPages > 1 && (
           <div className="p-4 border-t bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-sm text-gray-600">
@@ -556,7 +556,7 @@ export default function ApplicantListModal() {
           </div>
         )}
 
-        {/* Enhanced CV Preview Modal */}
+        {/*  CV Preview Modal */}
         {showFullCvPreview && (
           <Dialog open={!!showFullCvPreview} onOpenChange={() => setShowFullCvPreview(null)}>
             <DialogContent className="max-w-4xl h-[85vh] p-0">

@@ -95,7 +95,10 @@ export default function MyApplicationsPage() {
           ))}
         </div>
       )}
-      <ApplicationDetailModal application={selectedApplication} onClose={handleCloseModal} />
+      <ApplicationDetailModal application={selectedApplication} onClose={handleCloseModal}       
+isOpen={selectedApplication !== null}
+
+     />
     </div>
   );
 }
