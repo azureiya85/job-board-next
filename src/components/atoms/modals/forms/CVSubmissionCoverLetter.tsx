@@ -3,7 +3,7 @@
 import { UseFormRegister, FieldErrors, UseFormWatch } from 'react-hook-form';
 import { MessageSquare, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CVSubmissionForm } from '@/lib/validations/zodAuthValidation';
+import { CVSubmissionForm } from '@/lib/validations/zodApplicationValidation';
 import { cn } from '@/lib/utils';
 
 interface CVSubmissionCoverLetterProps {

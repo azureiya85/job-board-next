@@ -38,16 +38,18 @@ export interface JobPostingInStore {
 interface CompanyProfileState {
   company: CompanyDetailed | null;
   jobs: JobPostingInStore[];
-  activeTab: CompanyProfileTabId; // Updated to use extended type
+  activeTab: CompanyProfileTabId; 
   isLoadingCompany: boolean;
   isLoadingJobs: boolean;
   jobsPage: number;
   hasMoreJobs: boolean;
   totalJobs: number;
+   incrementTotalJobs: () => void; 
+  decrementTotalJobs: () => void; 
   setCompany: (company: CompanyDetailed) => void;
   setJobs: (jobs: JobPostingInStore[]) => void;
   addJobs: (jobs: JobPostingInStore[]) => void;
-  setActiveTab: (tab: CompanyProfileTabId) => void; // Updated to use extended type
+  setActiveTab: (tab: CompanyProfileTabId) => void; 
   setLoadingCompany: (loading: boolean) => void;
   setLoadingJobs: (loading: boolean) => void;
   setJobsPagination: (page: number, hasMore: boolean, total: number) => void;
@@ -69,6 +71,8 @@ export const useCompanyProfileStore = create<CompanyProfileState>((set) => ({
     jobs: [...state.jobs, ...newJobs]
   })),
   setActiveTab: (tab) => set({ activeTab: tab }),
+  incrementTotalJobs: () => set((state) => ({ totalJobs: state.totalJobs + 1 })),
+  decrementTotalJobs: () => set((state) => ({ totalJobs: Math.max(0, state.totalJobs - 1) })),
   setLoadingCompany: (loading) => set({ isLoadingCompany: loading }),
   setLoadingJobs: (loading) => set({ isLoadingJobs: loading }),
   setJobsPagination: (page, hasMore, total) => set({

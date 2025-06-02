@@ -6,7 +6,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const companyId = params.id;
+    const resolvedParams = await params;
+    const companyId = resolvedParams.id;
     const authResult = await validateCompanyAccess(companyId);
     
     return NextResponse.json(authResult);
