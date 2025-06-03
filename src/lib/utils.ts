@@ -32,3 +32,20 @@ export function formatSalary(min?: number | null, max?: number | null, currency?
   }
   return "Competitive";
 }
+
+export function formatEducationLevelDisplay(educationLevel: string | null | undefined): string {
+  if (!educationLevel) {
+    return 'N/A';
+  }
+  return educationLevel
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+export function formatEducationLevel(educationLevel: string): string {
+  return educationLevel
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+}
