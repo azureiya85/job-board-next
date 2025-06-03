@@ -6,9 +6,6 @@ import {
   Prisma, 
 } from '@prisma/client';
 
-export const ALL_ITEMS_VALUE = "__ALL__" as const; 
-export const DEBOUNCE_DELAY = 500;
-
 // ========================================================================
 // CORE DOMAIN TYPES
 // ========================================================================
@@ -65,10 +62,8 @@ export interface ApplicationFilters {
   ageMax?: number;
   salaryMin?: number;
   salaryMax?: number;
-  // Allow Prisma's Education enum or the special ALL_ITEMS_VALUE
-  education?: Education | typeof ALL_ITEMS_VALUE; // MODIFIED
-  // Allow Prisma's ApplicationStatus enum or the special ALL_ITEMS_VALUE
-  status?: ApplicationStatus | typeof ALL_ITEMS_VALUE; // MODIFIED
+  education?: string;
+  status?: ApplicationStatus 
   location?: string;
   hasCV?: boolean;
   hasCoverLetter?: boolean;
